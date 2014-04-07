@@ -1,0 +1,11 @@
+{
+    "name": "dchesterton/csd-photo",
+    "type": "project",
+    "description": "Common photo handling functionality",
+    "autoload": {
+        "psr-0": { "": "src/" }
+    },
+    "require": {
+        "php": ">=5.3.3"
+    }
+}
