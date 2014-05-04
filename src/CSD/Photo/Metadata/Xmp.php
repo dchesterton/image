@@ -1270,6 +1270,7 @@ class Xmp implements MetadataReaderInterface
             }
         }
 
+        // add beginning processing instruction if not present
         if (!$hasBegin) {
             $this->dom->insertBefore(
                 $this->dom->createProcessingInstruction(
@@ -1280,6 +1281,7 @@ class Xmp implements MetadataReaderInterface
             );
         }
 
+        // add end processing instruction if not present
         if (!$hasEnd) {
             $this->dom->appendChild($this->dom->createProcessingInstruction('xpacket', 'end="w"')); // append to end
         }
@@ -1294,7 +1296,7 @@ class Xmp implements MetadataReaderInterface
         }
 
         // checks complete, return xml as string
-        return $this->dom->saveXML();
+        return trim($this->dom->saveXML());
     }
 
     /**
