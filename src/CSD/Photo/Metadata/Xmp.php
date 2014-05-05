@@ -25,30 +25,41 @@ class Xmp implements MetadataReaderInterface
      *
      */
     const IPTC4_XMP_CORE_NS = 'http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/';
+
     /**
      *
      */
     const IPTC4_XMP_EXT_NS = 'http://iptc.org/std/Iptc4xmpExt/2008-02-29/';
+
     /**
      *
      */
     const PHOTOSHOP_NS = 'http://ns.adobe.com/photoshop/1.0/';
+
     /**
      *
      */
     const DC_NS = 'http://purl.org/dc/elements/1.1/';
+
     /**
      *
      */
     const XMP_RIGHTS_NS = 'http://ns.adobe.com/xap/1.0/rights/';
+
     /**
      *
      */
     const RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+
     /**
      *
      */
     const XMP_NS = "http://ns.adobe.com/xap/1.0/";
+
+    /**
+     *
+     */
+    const PHOTO_MECHANIC_NS = "http://ns.camerabits.com/photomechanic/1.0/";
 
     /**
      * @var DomDocument
@@ -77,7 +88,8 @@ class Xmp implements MetadataReaderInterface
         'xmp' => self::XMP_NS,
         'xmpRights' => self::XMP_RIGHTS_NS,
         'Iptc4xmpCore' => self::IPTC4_XMP_CORE_NS,
-        'Iptc4xmpExt' => self::IPTC4_XMP_EXT_NS
+        'Iptc4xmpExt' => self::IPTC4_XMP_EXT_NS,
+        'photomechanic' => self::PHOTO_MECHANIC_NS
     );
 
     /**
@@ -1123,6 +1135,11 @@ class Xmp implements MetadataReaderInterface
     public function setRating($rating)
     {
         $this->setAttr('xmp:Rating', $rating, self::XMP_NS);
+
+        // fix issue with Photo Mechanic not applying rating unless these flags are set
+        $this->setAttr('photomechanic:RatingEval', $rating, self::PHOTO_MECHANIC_NS);
+        $this->setAttr('photomechanic:RatingApply', 'True', self::PHOTO_MECHANIC_NS);
+
         return $this;
     }
 
