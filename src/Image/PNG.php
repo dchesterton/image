@@ -1,6 +1,7 @@
 <?php
 namespace CSD\Photo\Image;
 
+use CSD\Photo\Metadata\UnsupportedException;
 use CSD\Photo\Metadata\Xmp;
 
 /**
@@ -46,17 +47,20 @@ class PNG extends AbstractImage
     }
 
     /**
-     * @return Iptc
+     * @return Iptc|void
+     * @throws UnsupportedException
      */
     public function getIptc()
     {
-        // TODO: Implement getIptc() method.
+        throw new UnsupportedException('PNG files do not support IPTC metadata');
     }
 
     public static function fromFile($filename)
     {
         $contents = file_get_contents($filename);
 
+
+        $signaure = [137, 80, 78, 71, 13, 10, 26, 10];
 
 
 
