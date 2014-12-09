@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace CSD\Photo\Metadata\Reader;
+namespace CSD\Photo\Metadata;
 
 /**
  * Class to read EXIF metadata from an image.
  *
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
-class ExifReader
+class Exif
 {
     /**
      * Array to hold the EXIF metadata.

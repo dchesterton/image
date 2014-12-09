@@ -1,9 +1,12 @@
 <?php
-namespace CSD\Photo\Metadata;
+namespace CSD\Photo\Image\JPEG;
 
-class JPEGSegment
+/**
+ * @author Daniel Chesterton <daniel@chestertondevelopment.com>
+ */
+class Segment
 {
-    private static $segmentNames = array(
+    private static $segmentNames = [
         0xC0 => "SOF0",  0xC1 => "SOF1",  0xC2 => "SOF2",  0xC3 => "SOF4",
         0xC5 => "SOF5",  0xC6 => "SOF6",  0xC7 => "SOF7",  0xC8 => "JPG",
         0xC9 => "SOF9",  0xCA => "SOF10", 0xCB => "SOF11", 0xCD => "SOF13",
@@ -27,9 +30,9 @@ class JPEGSegment
         0xFC => "JPG12", 0xFD => "JPG13",
 
         0xFE => "COM",   0x01 => "TEM",   0x02 => "RES"
-    );
+    ];
 
-    private static $segmentDescriptions = array(
+    private static $segmentDescriptions = [
         0xC0 => "Start Of Frame (SOF) Huffman  - Baseline DCT",
         0xC1 => "Start Of Frame (SOF) Huffman  - Extended sequential DCT",
         0xC2 => "Start Of Frame Huffman  - Progressive DCT (SOF2)",
@@ -101,7 +104,7 @@ class JPEGSegment
         0xFE => "Comment (COM)",
         0x01 => "For temp private use arith code (TEM)",
         0x02 => "Reserved (RES)"
-    );
+    ];
 
     private $data;
     private $start;
@@ -130,7 +133,7 @@ class JPEGSegment
      *
      * @param mixed $data
      *
-     * @return JPEGSegment
+     * @return $this
      */
     public function setData($data)
     {
@@ -153,7 +156,7 @@ class JPEGSegment
      *
      * @param mixed $start
      *
-     * @return JPEGSegment
+     * @return $this
      */
     public function setStart($start)
     {
@@ -176,7 +179,7 @@ class JPEGSegment
      *
      * @param mixed $type
      *
-     * @return JPEGSegment
+     * @return $this
      */
     public function setType($type)
     {
@@ -208,5 +211,10 @@ class JPEGSegment
             return self::$segmentDescriptions[$this->type];
         }
         return '';
+    }
+
+    public function isXmpSegment()
+    {
+
     }
 }

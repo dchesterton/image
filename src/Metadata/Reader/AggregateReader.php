@@ -1,8 +1,9 @@
 <?php
 namespace CSD\Photo\Metadata\Reader;
 
+use CSD\Photo\Metadata\Exif;
+use CSD\Photo\Metadata\Iptc;
 use CSD\Photo\Metadata\Xmp;
-use CSD\Photo\Metadata\JPEG;
 
 /**
  * Aggregate metadata reader. Uses XMP to get metadata, falls back to IPTC where available.
@@ -15,59 +16,82 @@ class AggregateReader implements MetadataReaderInterface
     private $xmp;
 
     /**
-     * @var IptcReader
+     * @var Iptc
      */
     private $iptc;
 
     /**
-     * @var ExifReader
+     * @var Exif
      */
     private $exif;
 
     /**
-     * @var JPEG
+     * @var array
      */
-    private $jpeg;
+    private $priority;
 
     /**
-     * @param JPEG $jpeg
+     *
      */
-    public function __construct(JPEG $jpeg)
+    public function __construct(Xmp $xmp = null, Iptc $iptc = null, Exif $exif = null)
     {
-        $this->jpeg = $jpeg;
+        $this->xmp = $xmp;
+        $this->iptc = $iptc;
+        $this->exif = $exif;
+        $this->priority = ['xmp', 'iptc', 'exif'];
     }
 
     /**
-     * @return Xmp
+     * @param array $priority
+     *
+     * @return $this
+     * @throws \Exception
      */
-    public function getXmp()
+    public function setPriority(array $priority)
     {
-        if (!$this->xmp) {
-            $this->xmp = Xmp::fromJPEG($this->jpeg);
+        foreach ($priority as $metaType) {
+            if (!in_array($metaType, ['xmp', 'iptc', 'exif'], true)) {
+                throw new \Exception('Priority can only contain xmp, iptc or exif');
+            }
         }
-        return $this->xmp;
+
+        $this->priority = $priority;
+        return $this;
     }
 
     /**
-     * @return IptcReader
+     * @param string $field
+     * @param array  $supported
+     *
+     * @return string|null
      */
-    public function getIptc()
+    private function getMeta($field, $supported = null)
     {
-        if (!$this->iptc) {
-            $this->iptc = IptcReader::fromJPEG($this->jpeg);
-        }
-        return $this->iptc;
-    }
+        $value = null;
 
-    /**
-     * @return ExifReader
-     */
-    public function getExif()
-    {
-        if (!$this->iptc) {
-            $this->exif = ExifReader::fromJPEG($this->jpeg);
+        foreach ($this->priority as $metaType) {
+            // check if this meta type is supported for this field
+            if (!in_array($metaType, $supported, true)) {
+                continue;
+            }
+
+            $metaObject = $this->$metaType;
+
+            if (!$metaObject) {
+                // meta type object not available
+                continue;
+            }
+
+            $method = 'get' . ucfirst($field);
+
+            $value = $metaObject->$method();
+
+            if ($value) {
+                break;
+            }
         }
-        return $this->iptc;
+
+        return $value;
     }
 
     /**
@@ -75,15 +99,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getHeadline()
     {
-        return $this->getXmp()->getHeadline()?: $this->getIptc()->getHeadline();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getKw()
-    {
-        return $this->getXmp()->getHeadline()?: $this->getIptc()->getHeadline();
+        return $this->getMeta('headline', ['xmp', 'iptc']);
     }
 
     /**
@@ -91,7 +107,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getCaption()
     {
-        return $this->getXmp()->getCaption()?: $this->getIptc()->getCaption();
+        return $this->getMeta('Caption', ['xmp', 'iptc']);
     }
 
     /**
@@ -99,7 +115,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getEvent()
     {
-        return $this->getXmp()->getEvent()?: $this->getIptc()->getEvent();
+        return $this->getMeta('Event', ['xmp', 'iptc']);
     }
 
     /**
@@ -107,7 +123,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getLocation()
     {
-        return $this->getXmp()->getLocation()?: $this->getIptc()->getLocation();
+        return $this->getMeta('Location', ['xmp', 'iptc']);
     }
 
     /**
@@ -115,7 +131,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getCity()
     {
-        return $this->getXmp()->getCity()?: $this->getIptc()->getCity();
+        return $this->getMeta('City', ['xmp', 'iptc']);
     }
 
     /**
@@ -123,7 +139,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getState()
     {
-        return $this->getXmp()->getState()?: $this->getIptc()->getState();
+        return $this->getMeta('State', ['xmp', 'iptc']);
     }
 
     /**
@@ -131,7 +147,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getCountry()
     {
-        return $this->getXmp()->getCountry()?: $this->getIptc()->getCountry();
+        return $this->getMeta('Country', ['xmp', 'iptc']);
     }
 
     /**
@@ -139,7 +155,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getCountryCode()
     {
-        return $this->getXmp()->getCountryCode()?: $this->getIptc()->getCountryCode();
+        return $this->getMeta('CountryCode', ['xmp', 'iptc']);
     }
 
     /**
@@ -147,7 +163,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getPhotographerName()
     {
-        return $this->getXmp()->getPhotographerName()?: $this->getIptc()->getPhotographerName();
+        return $this->getMeta('PhotographerName', ['xmp', 'iptc']);
     }
 
     /**
@@ -155,7 +171,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getCredit()
     {
-        return $this->getXmp()->getCredit()?: $this->getIptc()->getCredit();
+        return $this->getMeta('Credit', ['xmp', 'iptc']);
     }
 
     /**
@@ -163,7 +179,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getPhotographerTitle()
     {
-        return $this->getXmp()->getPhotographerTitle()?: $this->getIptc()->getPhotographerTitle();
+        return $this->getMeta('PhotographerTitle', ['xmp', 'iptc']);
     }
 
     /**
@@ -171,7 +187,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getSource()
     {
-        return $this->getXmp()->getSource()?: $this->getIptc()->getSource();
+        return $this->getMeta('Source', ['xmp', 'iptc']);
     }
 
     /**
@@ -179,7 +195,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getCopyright()
     {
-        return $this->getXmp()->getCopyright()?: $this->getIptc()->getCopyright();
+        return $this->getMeta('Copyright', ['xmp', 'iptc']);
     }
 
     /**
@@ -187,7 +203,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getCopyrightUrl()
     {
-        return $this->getXmp()->getCopyrightUrl()?: $this->getIptc()->getCopyrightUrl();
+        return $this->getMeta('CopyrightUrl', ['xmp', 'iptc']);
     }
 
     /**
@@ -195,7 +211,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getRightsUsageTerms()
     {
-        return $this->getXmp()->getRightsUsageTerms()?: $this->getIptc()->getRightsUsageTerms();
+        return $this->getMeta('RightsUsageTerms', ['xmp', 'iptc']);
     }
 
     /**
@@ -203,7 +219,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getObjectName()
     {
-        return $this->getXmp()->getObjectName()?: $this->getIptc()->getObjectName();
+        return $this->getMeta('ObjectName', ['xmp', 'iptc']);
     }
 
     /**
@@ -211,7 +227,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getCaptionWriters()
     {
-        return $this->getXmp()->getCaptionWriters()?: $this->getIptc()->getCaptionWriters();
+        return $this->getMeta('CaptionWriters', ['xmp', 'iptc']);
     }
 
     /**
@@ -219,7 +235,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getInstructions()
     {
-        return $this->getXmp()->getInstructions()?: $this->getIptc()->getInstructions();
+        return $this->getMeta('Instructions', ['xmp', 'iptc']);
     }
 
     /**
@@ -227,7 +243,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getCategory()
     {
-        return $this->getXmp()->getCategory()?: $this->getIptc()->getCategory();
+        return $this->getMeta('Category', ['xmp', 'iptc']);
     }
 
     /**
@@ -235,7 +251,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getSupplementalCategories()
     {
-        return $this->getXmp()->getSupplementalCategories()?: $this->getIptc()->getSupplementalCategories();
+        return $this->getMeta('SupplementalCategories', ['xmp', 'iptc']);
     }
 
     /**
@@ -243,7 +259,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getContactAddress()
     {
-        return $this->getXmp()->getContactAddress()?: $this->getIptc()->getContactAddress();
+        return $this->getMeta('ContactAddress', ['xmp', 'iptc']);
     }
 
     /**
@@ -251,7 +267,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getContactCity()
     {
-        return $this->getXmp()->getContactCity()?: $this->getIptc()->getContactCity();
+        return $this->getMeta('ContactCity', ['xmp', 'iptc']);
     }
 
     /**
@@ -259,7 +275,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getContactState()
     {
-        return $this->getXmp()->getContactState()?: $this->getIptc()->getContactState();
+        return $this->getMeta('ContactState', ['xmp', 'iptc']);
     }
 
     /**
@@ -267,7 +283,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getContactZip()
     {
-        return $this->getXmp()->getContactZip()?: $this->getIptc()->getContactZip();
+        return $this->getMeta('ContactZip', ['xmp', 'iptc']);
     }
 
     /**
@@ -275,7 +291,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getContactCountry()
     {
-        return $this->getXmp()->getContactCountry()?: $this->getIptc()->getContactCountry();
+        return $this->getMeta('ContactCountry', ['xmp', 'iptc']);
     }
 
     /**
@@ -283,7 +299,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getContactEmail()
     {
-        return $this->getXmp()->getContactEmail()?: $this->getIptc()->getContactEmail();
+        return $this->getMeta('ContactEmail', ['xmp', 'iptc']);
     }
 
     /**
@@ -291,7 +307,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getContactPhone()
     {
-        return $this->getXmp()->getContactPhone()?: $this->getIptc()->getContactPhone();
+        return $this->getMeta('ContactPhone', ['xmp', 'iptc']);
     }
 
     /**
@@ -299,7 +315,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getContactUrl()
     {
-        return $this->getXmp()->getContactUrl()?: $this->getIptc()->getContactUrl();
+        return $this->getMeta('ContactUrl', ['xmp', 'iptc']);
     }
 
     /**
@@ -307,7 +323,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getTransmissionReference()
     {
-        return $this->getXmp()->getTransmissionReference()?: $this->getIptc()->getTransmissionReference();
+        return $this->getMeta('TransmissionReference', ['xmp', 'iptc']);
     }
 
     /**
@@ -315,7 +331,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getUrgency()
     {
-        return $this->getXmp()->getUrgency()?: $this->getIptc()->getUrgency();
+        return $this->getMeta('Urgency', ['xmp', 'iptc']);
     }
 
     /**
@@ -323,7 +339,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getRating()
     {
-        return $this->getXmp()->getRating()?: $this->getIptc()->getRating();
+        return $this->getMeta('Rating', ['xmp', 'iptc']);
     }
 
     /**
@@ -331,7 +347,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getKeywords()
     {
-        return $this->getXmp()->getKeywords()?: $this->getIptc()->getKeywords();
+        return $this->getMeta('Keywords', ['xmp', 'iptc']);
     }
 
     /**
@@ -339,7 +355,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getIPTCSubjectCodes()
     {
-        return $this->getXmp()->getIPTCSubjectCodes()?: $this->getIptc()->getIPTCSubjectCodes();
+        return $this->getMeta('IPTCSubjectCodes', ['xmp', 'iptc']);
     }
 
     /**
@@ -367,7 +383,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getIntellectualGenre()
     {
-        return $this->getXmp()->getIntellectualGenre()?: $this->getIptc()->getIntellectualGenre();
+        return $this->getMeta('IntellectualGenre', ['xmp', 'iptc']);
     }
 
     /**
@@ -377,7 +393,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getFeaturedOrganisationName()
     {
-        return $this->getXmp()->getFeaturedOrganisationName()?: $this->getIptc()->getFeaturedOrganisationName();
+        return $this->getMeta('FeaturedOrganisationName', ['xmp', 'iptc']);
     }
 
     /**
@@ -387,7 +403,7 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getFeaturedOrganisationCode()
     {
-        return $this->getXmp()->getFeaturedOrganisationCode()?: $this->getIptc()->getFeaturedOrganisationCode();
+        return $this->getMeta('FeaturedOrganisationCode', ['xmp', 'iptc']);
     }
 
     /**
@@ -397,6 +413,6 @@ class AggregateReader implements MetadataReaderInterface
      */
     public function getIPTCScene()
     {
-        return $this->getXmp()->getIPTCScene()?: $this->getIptc()->getIPTCScene();
+        return $this->getMeta('IPTCScene', ['xmp', 'iptc']);
     }
 }

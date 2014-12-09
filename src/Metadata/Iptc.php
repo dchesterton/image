@@ -8,30 +8,30 @@
  * file that was distributed with this source code.
  */
 
-namespace CSD\Photo\Metadata\Reader;
+namespace CSD\Photo\Metadata;
 
-use CSD\Photo\Metadata\JPEG;
+use CSD\Photo\Metadata\Reader\MetadataReaderInterface;
 
 /**
  * Class to read IPTC metadata from an image.
  *
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
-class IptcReader implements MetadataReaderInterface
+class Iptc implements MetadataReaderInterface
 {
     /**
      * Array to hold the IPTC metadata.
      *
      * @var array
      */
-    private $data = array();
+    private $data = [];
 
     /**
      * Constructor.
      *
      * @param array $data
      */
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
         $this->data = $data;
     }
@@ -110,7 +110,7 @@ class IptcReader implements MetadataReaderInterface
 
     }
 
-    public static function fromJPEG(JPEG $jpeg)
+    public static function  fromJPEG(JPEG $jpeg)
     {
         return new self(array());
         $segments = $jpeg->getSegmentsByName('APP13');
@@ -170,7 +170,7 @@ class IptcReader implements MetadataReaderInterface
 
                 // Next is a four byte size field indicating the size in bytes of the record's data  - MSB first
                 $dataSize = ord($irb[$pos]) * 16777216 + ord($irb[$pos + 1]) * 65536 +
-                            ord($irb[$pos + 2]) * 256 + ord($irb[$pos + 3]);
+                    ord($irb[$pos + 2]) * 256 + ord($irb[$pos + 3]);
 
                 $pos += 4;
 
@@ -191,26 +191,26 @@ class IptcReader implements MetadataReaderInterface
                     }
                     else
                     {*/
-                        $ResDesc = "";
+                    $ResDesc = "";
                     //}
                 }
-/*
-                // Get the Name of the Resource
-                if ( array_key_exists( $id, $GLOBALS[ "Photoshop_ID_Names" ] ) )
-                {
-                    $ResName = $GLOBALS['Photoshop_ID_Names'][ $id ];
-                }
-                else
-                {*/
-                    $ResName = "";
+                /*
+                                // Get the Name of the Resource
+                                if ( array_key_exists( $id, $GLOBALS[ "Photoshop_ID_Names" ] ) )
+                                {
+                                    $ResName = $GLOBALS['Photoshop_ID_Names'][ $id ];
+                                }
+                                else
+                                {*/
+                $ResName = "";
                 //}
 
                 // Store the Resource in the array to be returned
-                $dataArray[] = array("ResID" => $id,
-                                     "ResName" => $ResName,
-                                     "ResDesc" => $ResDesc,
-                                     "ResEmbeddedName" => $resembeddedname,
-                                     "ResData" => $resdata );
+                $dataArray[] = ["ResID" => $id,
+                    "ResName" => $ResName,
+                    "ResDesc" => $ResDesc,
+                    "ResEmbeddedName" => $resembeddedname,
+                    "ResData" => $resdata ];
 
                 // Jump over the data to the next record
                 $pos += $storedSize;
@@ -358,7 +358,7 @@ class IptcReader implements MetadataReaderInterface
      */
     public function getIPTCSubjectCodes()
     {
-        return array();
+        return [];
     }
 
     /**

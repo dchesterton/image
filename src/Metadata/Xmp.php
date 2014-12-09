@@ -25,41 +25,30 @@ class Xmp implements MetadataReaderInterface
      *
      */
     const IPTC4_XMP_CORE_NS = 'http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/';
-
     /**
      *
      */
     const IPTC4_XMP_EXT_NS = 'http://iptc.org/std/Iptc4xmpExt/2008-02-29/';
-
     /**
      *
      */
     const PHOTOSHOP_NS = 'http://ns.adobe.com/photoshop/1.0/';
-
     /**
      *
      */
     const DC_NS = 'http://purl.org/dc/elements/1.1/';
-
     /**
      *
      */
     const XMP_RIGHTS_NS = 'http://ns.adobe.com/xap/1.0/rights/';
-
     /**
      *
      */
     const RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
-
     /**
      *
      */
     const XMP_NS = "http://ns.adobe.com/xap/1.0/";
-
-    /**
-     *
-     */
-    const PHOTO_MECHANIC_NS = "http://ns.camerabits.com/photomechanic/1.0/";
 
     /**
      * @var DomDocument
@@ -81,16 +70,15 @@ class Xmp implements MetadataReaderInterface
      *
      * @var array
      */
-    private $namespaces = array(
+    private $namespaces = [
         'rdf' => self::RDF_NS,
         'dc' => self::DC_NS,
         'photoshop' => self::PHOTOSHOP_NS,
         'xmp' => self::XMP_NS,
         'xmpRights' => self::XMP_RIGHTS_NS,
         'Iptc4xmpCore' => self::IPTC4_XMP_CORE_NS,
-        'Iptc4xmpExt' => self::IPTC4_XMP_EXT_NS,
-        'photomechanic' => self::PHOTO_MECHANIC_NS
-    );
+        'Iptc4xmpExt' => self::IPTC4_XMP_EXT_NS
+    ];
 
     /**
      * @param string|null $data
@@ -113,7 +101,7 @@ class Xmp implements MetadataReaderInterface
         $this->dom->loadXML($data);
         $this->dom->encoding = 'UTF-8';
 
-        if ($this->dom->documentElement->nodeName != 'x:xmpmeta') {
+        if ('x:xmpmeta' !== $this->dom->documentElement->nodeName) {
             throw new \RuntimeException('Root node must be of type x:xmpmeta.');
         }
 
@@ -149,19 +137,7 @@ class Xmp implements MetadataReaderInterface
      */
     public static function fromJPEG(JPEG $jpeg)
     {
-        $possible = $jpeg->getSegmentsByName('APP1');
-        $xmpData = null;
 
-        foreach ($possible as $segment) {
-            $data = $segment->getData();
-
-            if (strncmp($data, "http://ns.adobe.com/xap/1.0/\x00", 29) == 0) {
-                $xmpData = substr($data, 29);
-                break;
-            }
-        }
-
-        return new self($xmpData);
     }
 
     /**
@@ -1135,11 +1111,6 @@ class Xmp implements MetadataReaderInterface
     public function setRating($rating)
     {
         $this->setAttr('xmp:Rating', $rating, self::XMP_NS);
-
-        // fix issue with Photo Mechanic not applying rating unless these flags are set
-        $this->setAttr('photomechanic:RatingEval', $rating, self::PHOTO_MECHANIC_NS);
-        $this->setAttr('photomechanic:RatingApply', 'True', self::PHOTO_MECHANIC_NS);
-
         return $this;
     }
 
@@ -1287,7 +1258,6 @@ class Xmp implements MetadataReaderInterface
             }
         }
 
-        // add beginning processing instruction if not present
         if (!$hasBegin) {
             $this->dom->insertBefore(
                 $this->dom->createProcessingInstruction(
@@ -1298,7 +1268,6 @@ class Xmp implements MetadataReaderInterface
             );
         }
 
-        // add end processing instruction if not present
         if (!$hasEnd) {
             $this->dom->appendChild($this->dom->createProcessingInstruction('xpacket', 'end="w"')); // append to end
         }
@@ -1313,7 +1282,7 @@ class Xmp implements MetadataReaderInterface
         }
 
         // checks complete, return xml as string
-        return trim($this->dom->saveXML());
+        return $this->dom->saveXML();
     }
 
     /**
