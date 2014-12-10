@@ -8,6 +8,29 @@ namespace CSD\Photo\Metadata;
  */
 class Aggregate
 {
+    private $fields = [
+        'headline' => ['xmp', 'iptc'],
+        'caption' => ['xmp', 'iptc'],
+        'location' => ['xmp', 'iptc'],
+        'city' => ['xmp', 'iptc'],
+        'state' => ['xmp', 'iptc'],
+        'country' => ['xmp', 'iptc'],
+        'countryCode' => ['xmp', 'iptc'],
+        'photographerName' => ['xmp', 'iptc'],
+        'credit' => ['xmp', 'iptc'],
+        'photographerTitle' => ['xmp', 'iptc'],
+        'source' => ['xmp', 'iptc'],
+        'copyright' => ['xmp', 'iptc'],
+        'objectName' => ['xmp', 'iptc'],
+        'captionWriters' => ['xmp', 'iptc'],
+        'instructions' => ['xmp', 'iptc'],
+        'category' => ['xmp', 'iptc'],
+        'supplementalCategories' => ['xmp', 'iptc'],
+        'transmissionReference' => ['xmp', 'iptc'],
+        'urgency' => ['xmp', 'iptc'],
+        'keywords' => ['xmp', 'iptc']
+    ];
+
     /**
      * @var Xmp
      */
@@ -59,197 +82,416 @@ class Aggregate
 
     /**
      * @param string $field
-     * @param array  $supported
      *
      * @return string|null
      */
-    private function getMeta($field, $supported = null)
+    private function get($field)
     {
-        $value = null;
-
         foreach ($this->priority as $metaType) {
             // check if this meta type is supported for this field
-            if (!in_array($metaType, $supported, true)) {
+            if (!in_array($metaType, $this->fields[$field], true)) {
                 continue;
             }
 
             $metaObject = $this->$metaType;
 
             if (!$metaObject) {
-                // meta type object not available
                 continue;
             }
 
-            $method = 'get' . ucfirst($field);
-
-            $value = $metaObject->$method();
+            $getter = 'get' . ucfirst($field);
+            $value = $metaObject->$getter();
 
             if ($value) {
-                break;
+                return $value;
             }
         }
 
-        return $value;
+        return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @param $field
+     * @param $value
+     *
+     * @return $this
+     */
+    private function set($field, $value)
+    {
+        $supported = $this->fields[$field];
+
+        foreach ($supported as $metaType) {
+            $metaObject = $this->$metaType;
+
+            if (!$metaObject) {
+                continue;
+            }
+
+            $setter = 'set' . ucfirst($field);
+            $metaObject->$setter($value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
      */
     public function getHeadline()
     {
-        return $this->getMeta('headline', ['xmp', 'iptc']);
+        return $this->get('headline');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $headline
+     *
+     * @return $this
+     */
+    public function setHeadline($headline)
+    {
+        return $this->set('headline', $headline);
+    }
+
+    /**
+     * @return $this
      */
     public function getCaption()
     {
-        return $this->getMeta('Caption', ['xmp', 'iptc']);
+        return $this->get('caption');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $caption
+     *
+     * @return $this
+     */
+    public function setCaption($caption)
+    {
+        return $this->set('caption', $caption);
+    }
+
+    /**
+     * @return $this
      */
     public function getLocation()
     {
-        return $this->getMeta('Location', ['xmp', 'iptc']);
+        return $this->get('location');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $location
+     *
+     * @return $this
+     */
+    public function setLocation($location)
+    {
+        return $this->set('location', $location);
+    }
+
+    /**
+     * @return $this
      */
     public function getCity()
     {
-        return $this->getMeta('City', ['xmp', 'iptc']);
+        return $this->get('city');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $city
+     *
+     * @return $this
+     */
+    public function setCity($city)
+    {
+        return $this->set('city', $city);
+    }
+
+    /**
+     * @return $this
      */
     public function getState()
     {
-        return $this->getMeta('State', ['xmp', 'iptc']);
+        return $this->get('state');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $state
+     *
+     * @return $this
+     */
+    public function setState($state)
+    {
+        return $this->set('state', $state);
+    }
+
+    /**
+     * @return $this
      */
     public function getCountry()
     {
-        return $this->getMeta('Country', ['xmp', 'iptc']);
+        return $this->get('country');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $country
+     *
+     * @return $this
+     */
+    public function setCountry($country)
+    {
+        return $this->set('country', $country);
+    }
+
+    /**
+     * @return $this
      */
     public function getCountryCode()
     {
-        return $this->getMeta('CountryCode', ['xmp', 'iptc']);
+        return $this->get('countryCode');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $countryCode
+     *
+     * @return $this
+     */
+    public function setCountryCode($countryCode)
+    {
+        return $this->set('countryCode', $countryCode);
+    }
+
+    /**
+     * @return $this
      */
     public function getPhotographerName()
     {
-        return $this->getMeta('PhotographerName', ['xmp', 'iptc']);
+        return $this->get('photographerName');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $photographerName
+     *
+     * @return $this
+     */
+    public function setPhotographerName($photographerName)
+    {
+        return $this->set('photographerName', $photographerName);
+    }
+
+    /**
+     * @return $this
      */
     public function getCredit()
     {
-        return $this->getMeta('Credit', ['xmp', 'iptc']);
+        return $this->get('credit');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $credit
+     *
+     * @return $this
+     */
+    public function setCredit($credit)
+    {
+        return $this->set('credit', $credit);
+    }
+
+    /**
+     * @return $this
      */
     public function getPhotographerTitle()
     {
-        return $this->getMeta('PhotographerTitle', ['xmp', 'iptc']);
+        return $this->get('photographerTitle');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $photographerTitle
+     *
+     * @return $this
+     */
+    public function setPhotographerTitle($photographerTitle)
+    {
+        return $this->set('photographerTitle', $photographerTitle);
+    }
+
+    /**
+     * @return $this
      */
     public function getSource()
     {
-        return $this->getMeta('Source', ['xmp', 'iptc']);
+        return $this->get('source');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $source
+     *
+     * @return $this
+     */
+    public function setSource($source)
+    {
+        return $this->set('source', $source);
+    }
+
+    /**
+     * @return $this
      */
     public function getCopyright()
     {
-        return $this->getMeta('Copyright', ['xmp', 'iptc']);
+        return $this->get('copyright');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $copyright
+     *
+     * @return $this
+     */
+    public function setCopyright($copyright)
+    {
+        return $this->set('copyright', $copyright);
+    }
+
+    /**
+     * @return $this
      */
     public function getObjectName()
     {
-        return $this->getMeta('ObjectName', ['xmp', 'iptc']);
+        return $this->get('objectName');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $objectName
+     *
+     * @return $this
+     */
+    public function setObjectName($objectName)
+    {
+        return $this->set('objectName', $objectName);
+    }
+
+    /**
+     * @return $this
      */
     public function getCaptionWriters()
     {
-        return $this->getMeta('CaptionWriters', ['xmp', 'iptc']);
+        return $this->get('captionWriters');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $captionWriters
+     *
+     * @return $this
+     */
+    public function setCaptionWriters($captionWriters)
+    {
+        return $this->set('captionWriters', $captionWriters);
+    }
+
+    /**
+     * @return $this
      */
     public function getInstructions()
     {
-        return $this->getMeta('Instructions', ['xmp', 'iptc']);
+        return $this->get('instructions');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $instructions
+     *
+     * @return $this
+     */
+    public function setInstructions($instructions)
+    {
+        return $this->set('instructions', $instructions);
+    }
+
+    /**
+     * @return $this
      */
     public function getCategory()
     {
-        return $this->getMeta('Category', ['xmp', 'iptc']);
+        return $this->get('category');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $category
+     *
+     * @return $this
+     */
+    public function setCategory($category)
+    {
+        return $this->set('category', $category);
+    }
+
+    /**
+     * @return $this
      */
     public function getSupplementalCategories()
     {
-        return $this->getMeta('SupplementalCategories', ['xmp', 'iptc']);
+        return $this->get('supplementalCategories');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $supplementalCategories
+     *
+     * @return $this
+     */
+    public function setSupplementalCategories($supplementalCategories)
+    {
+        return $this->set('supplementalCategories', $supplementalCategories);
+    }
+
+    /**
+     * @return $this
      */
     public function getTransmissionReference()
     {
-        return $this->getMeta('TransmissionReference', ['xmp', 'iptc']);
+        return $this->get('transmissionReference');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $transmissionReference
+     *
+     * @return $this
+     */
+    public function setTransmissionReference($transmissionReference)
+    {
+        return $this->set('transmissionReference', $transmissionReference);
+    }
+
+    /**
+     * @return $this
      */
     public function getUrgency()
     {
-        return $this->getMeta('Urgency', ['xmp', 'iptc']);
+        return $this->get('urgency');
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $urgency
+     *
+     * @return $this
+     */
+    public function setUrgency($urgency)
+    {
+        return $this->set('urgency', $urgency);
+    }
+
+    /**
+     * @return $this
      */
     public function getKeywords()
     {
-        return $this->getMeta('Keywords', ['xmp', 'iptc']);
+        return $this->get('keywords');
+    }
+
+    /**
+     * @param mixed $keywords
+     *
+     * @return $this
+     */
+    public function setKeywords($keywords)
+    {
+        return $this->set('keywords', $keywords);
     }
 
     /**

@@ -4,7 +4,7 @@ namespace CSD\Photo\Tests\Metadata\Reader;
 use CSD\Photo\Metadata\Iptc;
 
 /**
- * @coversDefaultClass \CSD\Photo\Metadata\Reader\IptcReader
+ * @coversDefaultClass \CSD\Photo\Metadata\Iptc
  */
 class IptcTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,6 +19,35 @@ class IptcTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->meta = Iptc::fromFile(__DIR__ . '/../Fixtures/metapm.jpg');
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetaFields()
+    {
+        return [
+            ['headline'],
+            ['caption'],
+            ['location'],
+            ['city'],
+            ['state'],
+            ['country'],
+            ['countryCode'],
+            ['photographerName'],
+            ['credit'],
+            ['source'],
+            ['photographerTitle'],
+            ['copyright'],
+            ['objectName'],
+            ['captionWriters'],
+            ['instructions'],
+            ['category'],
+            ['supplementalCategories'],
+            ['transmissionReference'],
+            ['urgency'],
+            ['keywords']
+        ];
     }
 
     /**
@@ -49,8 +78,72 @@ class IptcTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCategory()
+    public function tesstCategory()
     {
         $this->assertEquals('SPO', $this->meta->getCategory());
+    }
+
+    /**
+     * @dataProvider getMetaFields
+     */
+    public function testGetSetMeta($field)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $value = 'test';
+
+        $iptc = new Iptc;
+        $return = $iptc->$setter($value);
+
+        $this->assertSame($iptc, $return);
+
+        $getter = 'get' . ucfirst($field);
+
+        $this->assertSame($value, $iptc->$getter());
+    }
+
+    /**
+     * @dataProvider getMetaFields
+     */
+    public function testHasChanges($field)
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $value = 'test';
+
+        $iptc = new Iptc;
+
+        $this->assertFalse($iptc->hasChanges());
+
+        $iptc->$setter($value);
+
+        $this->assertTrue($iptc->hasChanges());
+    }
+
+    /**
+     * @dataProvider getMetaFields
+     */
+    public function testNull($field)
+    {
+        $getter = 'get' . ucfirst($field);
+
+        $iptc = new Iptc;
+
+        $this->assertNull($iptc->$getter());
+    }
+
+    public function testAll()
+    {
+        $iptc = new Iptc;
+
+        $this->assertSame([], $iptc->all());
+
+        $iptc->setHeadline('Headline');
+        $iptc->setCaption('Caption');
+
+        $this->assertSame(
+            ['2#105' => ['Headline'], '2#120' => ['Caption']],
+            $iptc->all()
+        );
     }
 }

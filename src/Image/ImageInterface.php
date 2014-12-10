@@ -1,8 +1,10 @@
 <?php
 namespace CSD\Photo\Image;
 
-use CSD\Photo\Metadata\Reader\Aggregate;
+use CSD\Photo\Metadata\Aggregate;
 use CSD\Photo\Metadata\UnsupportedException;
+use CSD\Photo\Metadata\Exif;
+use CSD\Photo\Metadata\Iptc;
 use CSD\Photo\Metadata\Xmp;
 
 /**

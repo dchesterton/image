@@ -2,13 +2,17 @@
 
 namespace CSD\Photo\Image;
 
-use CSD\Photo\Metadata\Reader\Aggregate;
+use CSD\Photo\Metadata\Aggregate;
+use CSD\Photo\Metadata\UnsupportedException;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
 abstract class AbstractImage implements ImageInterface
 {
+    /**
+     * @var string
+     */
     protected $filename;
 
     /**
@@ -27,15 +31,30 @@ abstract class AbstractImage implements ImageInterface
      */
     public function getAggregateMeta()
     {
-        $xmp = $this->getXmp();
-        $exif = $this->getExif();
-        $iptc = $this->getIptc();
+        try {
+            $xmp = $this->getXmp();
+        } catch (UnsupportedException $e) {
+            $xmp = null;
+        }
 
-        $reader = new Aggregate($xmp, $exif, $iptc);
+        try {
+            $exif = $this->getExif();
+        } catch (UnsupportedException $e) {
+            $exif = null;
+        }
 
-        return $reader;
+        try {
+            $iptc = $this->getIptc();
+        } catch (UnsupportedException $e) {
+            $iptc = null;
+        }
+
+        return new Aggregate($xmp, $iptc, $exif);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function save($filename = null)
     {
         $filename = $filename ?: $this->filename;

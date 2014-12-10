@@ -9,6 +9,32 @@ namespace CSD\Photo\Metadata;
 class Iptc
 {
     /**
+     * @var array
+     */
+    private $fields = [
+        'headline'               => '2#105',
+        'caption'                => '2#120',
+        'location'               => '2#092',
+        'city'                   => '2#090',
+        'state'                  => '2#095',
+        'country'                => '2#101',
+        'countryCode'            => '2#100',
+        'photographerName'       => '2#080',
+        'credit'                 => '2#110',
+        'photographerTitle'      => '2#085',
+        'source'                 => '2#115',
+        'copyright'              => '2#116',
+        'objectName'             => '2#005',
+        'captionWriters'         => '2#122',
+        'instructions'           => '2#040',
+        'category'               => '2#015',
+        'supplementalCategories' => '2#020',
+        'transmissionReference'  => '2#103',
+        'urgency'                => '2#010',
+        'keywords'               => '2#025'
+    ];
+
+    /**
      * Array to hold the IPTC metadata.
      *
      * @var array
@@ -244,18 +270,6 @@ class Iptc
     }
 
     /**
-     * Load IPTC data from an array.
-     *
-     * @param array $data
-     *
-     * @return void
-     */
-    public function loadFromArray($data)
-    {
-        $this->data = $data;
-    }
-
-    /**
      * Returns whether the field is present in the data. It does not check if the field is empty or null.
      *
      * @param string $field The IPTC field to check, e.g. 2#114.
@@ -277,8 +291,10 @@ class Iptc
      */
     public function get($field, $single = true)
     {
-        if ($this->has($field)) {
-            return ($single)? $this->data[$field][0]: $this->data[$field];
+        $code = $this->fields[$field];
+
+        if ($this->has($code)) {
+            return ($single)? $this->data[$code][0]: $this->data[$code];
         }
 
         return null;
@@ -292,10 +308,20 @@ class Iptc
      */
     public function set($field, $value)
     {
-        $this->data[$field] = $value;
+        $code = $this->fields[$field];
+
+        $this->data[$code] = $value;
         $this->hasChanges = true;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHeadline()
+    {
+        return $this->get('headline');
     }
 
     /**
@@ -305,167 +331,349 @@ class Iptc
      */
     public function setHeadline($headline)
     {
-        return $this->set('2#105', $headline);
+        return $this->set('headline', [$headline]);
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getHeadline()
-    {
-        return $this->get('2#105');
-    }
-
-    /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCaption()
     {
-        return $this->get('2#120');
+        return $this->get('caption');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $caption
+     *
+     * @return $this
+     */
+    public function setCaption($caption)
+    {
+        return $this->set('caption', [$caption]);
+    }
+
+    /**
+     * @return string
      */
     public function getLocation()
     {
-        return $this->get('2#092');
+        return $this->get('location');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $location
+     *
+     * @return $this
+     */
+    public function setLocation($location)
+    {
+        return $this->set('location', [$location]);
+    }
+
+    /**
+     * @return string
      */
     public function getCity()
     {
-        return $this->get('2#090');
+        return $this->get('city');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $city
+     *
+     * @return $this
+     */
+    public function setCity($city)
+    {
+        return $this->set('city', [$city]);
+    }
+
+    /**
+     * @return string
      */
     public function getState()
     {
-        return $this->get('2#095');
+        return $this->get('state');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $state
+     *
+     * @return $this
+     */
+    public function setState($state)
+    {
+        return $this->set('state', [$state]);
+    }
+
+    /**
+     * @return string
      */
     public function getCountry()
     {
-        return $this->get('2#101');
+        return $this->get('country');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $country
+     *
+     * @return $this
+     */
+    public function setCountry($country)
+    {
+        return $this->set('country', [$country]);
+    }
+
+    /**
+     * @return string
      */
     public function getCountryCode()
     {
-        return $this->get('2#100');
+        return $this->get('countryCode');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $countryCode
+     *
+     * @return $this
+     */
+    public function setCountryCode($countryCode)
+    {
+        return $this->set('countryCode', [$countryCode]);
+    }
+
+    /**
+     * @return string
      */
     public function getPhotographerName()
     {
-        return $this->get('2#080');
+        return $this->get('photographerName');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $photographerName
+     *
+     * @return $this
+     */
+    public function setPhotographerName($photographerName)
+    {
+        return $this->set('photographerName', [$photographerName]);
+    }
+
+    /**
+     * @return string
      */
     public function getCredit()
     {
-        return $this->get('2#110');
+        return $this->get('credit');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $credit
+     *
+     * @return $this
+     */
+    public function setCredit($credit)
+    {
+        return $this->set('credit', [$credit]);
+    }
+
+    /**
+     * @return string
      */
     public function getPhotographerTitle()
     {
-        return $this->get('2#085');
+        return $this->get('photographerTitle');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $photographerTitle
+     *
+     * @return $this
+     */
+    public function setPhotographerTitle($photographerTitle)
+    {
+        return $this->set('photographerTitle', [$photographerTitle]);
+    }
+
+    /**
+     * @return string
      */
     public function getSource()
     {
-        return $this->get('2#115');
+        return $this->get('source');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $source
+     *
+     * @return $this
+     */
+    public function setSource($source)
+    {
+        return $this->set('source', [$source]);
+    }
+
+    /**
+     * @return string
      */
     public function getCopyright()
     {
-        return $this->get('2#116');
+        return $this->get('copyright');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $copyright
+     *
+     * @return $this
+     */
+    public function setCopyright($copyright)
+    {
+        return $this->set('copyright', [$copyright]);
+    }
+
+    /**
+     * @return string
      */
     public function getObjectName()
     {
-        return $this->get('2#005');
+        return $this->get('objectName');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $objectName
+     *
+     * @return $this
+     */
+    public function setObjectName($objectName)
+    {
+        return $this->set('objectName', [$objectName]);
+    }
+
+    /**
+     * @return string
      */
     public function getCaptionWriters()
     {
-        return $this->get('2#122');
+        return $this->get('captionWriters');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $captionWriters
+     *
+     * @return $this
+     */
+    public function setCaptionWriters($captionWriters)
+    {
+        return $this->set('captionWriters', [$captionWriters]);
+    }
+
+    /**
+     * @return string
      */
     public function getInstructions()
     {
-        return $this->get('2#040');
+        return $this->get('instructions');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $instructions
+     *
+     * @return $this
+     */
+    public function setInstructions($instructions)
+    {
+        return $this->set('instructions', [$instructions]);
+    }
+
+    /**
+     * @return string
      */
     public function getCategory()
     {
-        return $this->get('2#015');
+        return $this->get('category');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $category
+     *
+     * @return $this
+     */
+    public function setCategory($category)
+    {
+        return $this->set('category', [$category]);
+    }
+
+    /**
+     * @return string
      */
     public function getSupplementalCategories()
     {
-        return $this->get('2#020');
+        return $this->get('supplementalCategories');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $supplementalCategories
+     *
+     * @return $this
+     */
+    public function setSupplementalCategories($supplementalCategories)
+    {
+        return $this->set('supplementalCategories', [$supplementalCategories]);
+    }
+
+    /**
+     * @return string
      */
     public function getTransmissionReference()
     {
-        return $this->get('2#103');
+        return $this->get('transmissionReference');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $transmissionReference
+     *
+     * @return $this
+     */
+    public function setTransmissionReference($transmissionReference)
+    {
+        return $this->set('transmissionReference', [$transmissionReference]);
+    }
+
+    /**
+     * @return string
      */
     public function getUrgency()
     {
-        return $this->get('2#010');
+        return $this->get('urgency');
     }
 
     /**
-     * {@inheritdoc}
+     * @param $urgency
+     *
+     * @return $this
+     */
+    public function setUrgency($urgency)
+    {
+        return $this->set('urgency', [$urgency]);
+    }
+
+    /**
+     * @return string
      */
     public function getKeywords()
     {
-        return $this->get('2#025');
+        return $this->get('keywords', false);
+    }
+
+    /**
+     * @param $keywords
+     *
+     * @return $this
+     */
+    public function setKeywords($keywords)
+    {
+        return $this->set('keywords', $keywords);
     }
 
     /**
@@ -481,7 +689,7 @@ class Iptc
     /**
      * @return boolean
      */
-    public function getHasChanges()
+    public function hasChanges()
     {
         return $this->hasChanges;
     }
