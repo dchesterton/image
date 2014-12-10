@@ -3,15 +3,16 @@ CSD Photo
 
 Supported image types:
    - JPEG
-   - TIFF
    - PNG
-   - RAW FORMATS
-   	- CR2, NEF, etc.
+   - ~~TIFF~~
+   - ~~DNG~~
+   - ~~RAW FORMATS~~
+   	- ~~CR2, NEF, etc.~~
 
 Supported image meta types:
    - XMP
    - IPTC
-   - EXIF
+   - ~~EXIF~~
 
 ### Get metadata
 
