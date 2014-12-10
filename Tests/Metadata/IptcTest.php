@@ -13,10 +13,12 @@ class IptcTest extends \PHPUnit_Framework_TestCase
      */
     private $meta;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
-        //$this->meta = IptcReader::fromFile(__DIR__ . '/PHC_CANVEY_CARSHALTON_010314_047.JPG');
-        $this->meta = Iptc::fromFile(__DIR__ . '/DJC36439.jpg');
+        $this->meta = Iptc::fromFile(__DIR__ . '/../Fixtures/metapm.jpg');
     }
 
     /**
@@ -24,20 +26,13 @@ class IptcTest extends \PHPUnit_Framework_TestCase
      */
     public function testHeadline()
     {
-        $this->assertEquals(
-            'Canvey Island v Carshalton Athletic. Ryman Isthmian Premier League',
-            $this->meta->getHeadline()
-        );
+        $this->assertEquals('Headline', $this->meta->getHeadline());
     }
 
-    /**
-     * @covers ::getCaption
-     */
-    public function testCaption()
+    public function tsestCaption()
     {
         $this->assertEquals(
-            'MARCH 01: å during the Ryman Isthmian Premier League match between Canvey Island and Carshalton Athletic' .
-            ' at The Prospects Stadium in Canvey Island, England. (Photo by Daniel Chesterton/phcimages.com)',
+            'José Mourinho',
             $this->meta->getCaption()
         );
     }
@@ -54,14 +49,8 @@ class IptcTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers ::getCategory
-     */
     public function testCategory()
     {
-        $this->assertEquals(
-            'SPO',
-            $this->meta->getCategory()
-        );
+        $this->assertEquals('SPO', $this->meta->getCategory());
     }
 }

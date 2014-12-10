@@ -57,7 +57,8 @@
    </xmpRights:UsageTerms>
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>Keywords</rdf:li>
+     <rdf:li>A keyword</rdf:li>
+     <rdf:li>Another keyword</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
@@ -145,7 +146,8 @@
     Iptc4xmpCore:CiUrlWork="http://www.example.com"/>
    <Iptc4xmpExt:PersonInImage>
     <rdf:Bag>
-     <rdf:li>Persons Shown</rdf:li>
+     <rdf:li>A person</rdf:li>
+     <rdf:li>Another person</rdf:li>
     </rdf:Bag>
    </Iptc4xmpExt:PersonInImage>
    <Iptc4xmpExt:LocationShown>

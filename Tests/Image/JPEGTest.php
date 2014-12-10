@@ -13,32 +13,41 @@ use CSD\Photo\Metadata\Xmp;
 class JPEGTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Test that JPEG class returns an Xmp object when there is XMP data.
-     *
-     * @covers ::getXmp
+     * Test that JPEG can read XMP embedded with Photo Mechanic.
      */
-    public function testGetXmp()
+    public function testGetXmpPhotoMechanic()
     {
-        $jpeg = JPEG::fromFile(__DIR__ . '/../Images/Xmp/meta.JPG');
+        $jpeg = JPEG::fromFile(__DIR__ . '/../Fixtures/metapm.JPG');
 
         $xmp = $jpeg->getXmp();
 
         $this->assertInstanceOf(Xmp::class, $xmp);
-        $this->assertEquals('A headline here', $xmp->getHeadline());
+        $this->assertSame('Headline', $xmp->getHeadline());
+    }
+
+    /**
+     * Test that JPEG can read XMP embedded with Photoshop.
+     */
+    public function testGetXmpPhotoshop()
+    {
+        $jpeg = JPEG::fromFile(__DIR__ . '/../Fixtures/metaphotoshop.JPG');
+
+        $xmp = $jpeg->getXmp();
+
+        $this->assertInstanceOf(Xmp::class, $xmp);
+        $this->assertSame('Headline', $xmp->getHeadline());
     }
 
     /**
      * Test that JPEG class returns an empty XMP object when there is no XMP data.
-     *
-     * @covers ::getXmp
      */
     public function testGetXmpNoMeta()
     {
-        $jpeg = JPEG::fromFile(__DIR__ . '/../Images/Xmp/nometa.JPG');
+        $jpeg = JPEG::fromFile(__DIR__ . '/../Fixtures/nometa.JPG');
 
         $xmp = $jpeg->getXmp();
 
         $this->assertInstanceOf(Xmp::class, $xmp);
-        $this->assertEquals('', $xmp->getHeadline());
+        $this->assertNull($xmp->getHeadline());
     }
 }

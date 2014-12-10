@@ -1,23 +1,44 @@
 <?php
-namespace CSD\Photo\Tests\Metadata\Reader;
+namespace CSD\Photo\Tests\Metadata;
 
 use CSD\Photo\Image\JPEG;
 use CSD\Photo\Metadata\Iptc;
-use CSD\Photo\Metadata\Reader\AggregateReader;
+use CSD\Photo\Metadata\Aggregate;
 use CSD\Photo\Metadata\Xmp;
 
 /**
- * Unit tests for {@see \CSD\Photo\Metadata\Reader\AggregateReader}.
+ * Unit tests for {@see \CSD\Photo\Metadata\Aggregate}.
  *
- * @coversDefaultClass \CSD\Photo\Metadata\Reader\AggregateReader
+ * @coversDefaultClass \CSD\Photo\Metadata\Aggregate
  */
-class AggregateReaderTest extends \PHPUnit_Framework_TestCase
+class AggregateTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return array
+     */
     public function getXmpAndIptcFields()
     {
         return [
             ['headline'],
-            ['caption']
+            ['caption'],
+            ['location'],
+            ['city'],
+            ['state'],
+            ['country'],
+            ['countryCode'],
+            ['photographerName'],
+            ['credit'],
+            ['photographerTitle'],
+            ['source'],
+            ['copyright'],
+            ['objectName'],
+            ['captionWriters'],
+            ['instructions'],
+            ['category'],
+            ['supplementalCategories'],
+            ['transmissionReference'],
+            ['urgency'],
+            ['keywords']
         ];
     }
 
@@ -41,7 +62,7 @@ class AggregateReaderTest extends \PHPUnit_Framework_TestCase
             ->method($method)
             ->will($this->returnValue('IPTC value'));
 
-        $aggregateReader = new AggregateReader($xmp, $iptc);
+        $aggregateReader = new Aggregate($xmp, $iptc);
 
         $this->assertEquals('XMP value', $aggregateReader->$method());
 
@@ -74,7 +95,7 @@ class AggregateReaderTest extends \PHPUnit_Framework_TestCase
             ->method($method)
             ->will($this->returnValue('IPTC value'));
 
-        $aggregateReader = new AggregateReader($xmp, $iptc);
+        $aggregateReader = new Aggregate($xmp, $iptc);
 
         // should always be IPTC as XMP returns null
         $this->assertEquals('IPTC value', $aggregateReader->$method());
@@ -85,9 +106,20 @@ class AggregateReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testNullWhenNoProviders()
     {
-        $reader = new AggregateReader;
+        $reader = new Aggregate;
 
         $this->assertNull($reader->getHeadline());
         $this->assertNull($reader->getCaption());
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Priority can only contain xmp, iptc or exif
+     */
+    public function testInvalidPriority()
+    {
+        $reader = new Aggregate;
+
+        $reader->setPriority(['test']);
     }
 }

@@ -1,7 +1,8 @@
 <?php
 namespace CSD\Photo\Image;
 
-use CSD\Photo\Metadata\Reader\AggregateReader;
+use CSD\Photo\Metadata\Reader\Aggregate;
+use CSD\Photo\Metadata\UnsupportedException;
 use CSD\Photo\Metadata\Xmp;
 
 /**
@@ -31,21 +32,24 @@ interface ImageInterface
 
     /**
      * @return Xmp
+     * @throws UnsupportedException
      */
     public function getXmp();
 
     /**
      * @return Exif
+     * @throws UnsupportedException
      */
     public function getExif();
 
     /**
      * @return Iptc
+     * @throws UnsupportedException
      */
     public function getIptc();
 
     /**
-     * @return AggregateReader
+     * @return Aggregate
      */
     public function getAggregateMeta();
 

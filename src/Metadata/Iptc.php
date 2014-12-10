@@ -1,23 +1,12 @@
 <?php
-/**
- * This file is part of the Photo Store package.
- *
- * (c) Daniel Chesterton <daniel@chestertondevelopment.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace CSD\Photo\Metadata;
-
-use CSD\Photo\Metadata\Reader\MetadataReaderInterface;
 
 /**
  * Class to read IPTC metadata from an image.
  *
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
-class Iptc implements MetadataReaderInterface
+class Iptc
 {
     /**
      * Array to hold the IPTC metadata.
@@ -25,6 +14,11 @@ class Iptc implements MetadataReaderInterface
      * @var array
      */
     private $data = [];
+
+    /**
+     * @var bool
+     */
+    private $hasChanges = false;
 
     /**
      * Constructor.
@@ -227,20 +221,20 @@ class Iptc implements MetadataReaderInterface
      *
      * @param string $path The path of the image.
      *
-     * @return IptcReader
+     * @return self
      */
     public static function fromFile($path)
     {
         @getimagesize($path, $info);
 
-        $iptc = (isset($info['APP13']))? iptcparse($info['APP13']): array();
-        $data = array();
+        $iptc = (isset($info['APP13']))? iptcparse($info['APP13']): [];
+        $data = [];
 
         foreach ($iptc as $field => $values) {
             // convert values to UTF-8 if needed
             for ($i = 0; $i < count($values); $i++) {
                 if (!self::seemsUtf8($values[$i])) {
-                    $values[$i] = utf8_encode($values[$i]);
+                    $values[$i] = utf8_decode($values[$i]);
                 }
             }
             $data[$field] = $values;
@@ -289,6 +283,31 @@ class Iptc implements MetadataReaderInterface
 
         return null;
     }
+
+    /**
+     * @param string $field
+     * @param mixed  $value
+     *
+     * @return $this
+     */
+    public function set($field, $value)
+    {
+        $this->data[$field] = $value;
+        $this->hasChanges = true;
+
+        return $this;
+    }
+
+    /**
+     * @param string $headline
+     *
+     * @return $this
+     */
+    public function setHeadline($headline)
+    {
+        return $this->set('2#105', $headline);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -303,14 +322,6 @@ class Iptc implements MetadataReaderInterface
     public function getCaption()
     {
         return $this->get('2#120');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEvent()
-    {
-        return '';
     }
 
     /**
@@ -356,14 +367,6 @@ class Iptc implements MetadataReaderInterface
     /**
      * {@inheritdoc}
      */
-    public function getIPTCSubjectCodes()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getPhotographerName()
     {
         return $this->get('2#080');
@@ -399,22 +402,6 @@ class Iptc implements MetadataReaderInterface
     public function getCopyright()
     {
         return $this->get('2#116');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCopyrightUrl()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRightsUsageTerms()
-    {
-        return '';
     }
 
     /**
@@ -460,70 +447,6 @@ class Iptc implements MetadataReaderInterface
     /**
      * {@inheritdoc}
      */
-    public function getContactAddress()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactCity()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactState()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactZip()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactCountry()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactEmail()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactPhone()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactUrl()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getTransmissionReference()
     {
         return $this->get('2#103');
@@ -546,14 +469,6 @@ class Iptc implements MetadataReaderInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getRating()
-    {
-        return '';
-    }
-
-    /**
      * Get the IPTC data.
      *
      * @return array
@@ -564,42 +479,10 @@ class Iptc implements MetadataReaderInterface
     }
 
     /**
-     * Get intellectual genre
-     *
-     * @return string
+     * @return boolean
      */
-    public function getIntellectualGenre()
+    public function getHasChanges()
     {
-        return '';
-    }
-
-    /**
-     * Get featured organisation name
-     *
-     * @return string
-     */
-    public function getFeaturedOrganisationName()
-    {
-        return '';
-    }
-
-    /**
-     * Get featured organisation code
-     *
-     * @return string
-     */
-    public function getFeaturedOrganisationCode()
-    {
-        return '';
-    }
-
-    /**
-     * Get IPTC scene
-     *
-     * @return string
-     */
-    public function getIPTCScene()
-    {
-        return '';
+        return $this->hasChanges;
     }
 }

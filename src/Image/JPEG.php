@@ -84,7 +84,7 @@ class JPEG extends AbstractImage
         // Insert a new XMP/RDF APP1 segment at the specified point.
         $segment = new JPEG\Segment(0xE1, 0, "http://ns.adobe.com/xap/1.0/\x00" . $xmpData);
 
-        array_splice($this->segments, $i, 0, array($segment));
+        array_splice($this->segments, $i, 0, [$segment]);
     }
 
     public function save($filename = null)

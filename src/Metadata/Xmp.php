@@ -10,7 +10,6 @@
 
 namespace CSD\Photo\Metadata;
 
-use CSD\Photo\Metadata\Reader\MetadataReaderInterface;
 use DomDocument;
 use DOMXPath;
 
@@ -18,37 +17,50 @@ use DOMXPath;
  * Class to read XMP metadata from an image.
  *
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
+ *
+ * todo: add xmp:CreatorTool
  */
-class Xmp implements MetadataReaderInterface
+class Xmp
 {
     /**
      *
      */
     const IPTC4_XMP_CORE_NS = 'http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/';
+
     /**
      *
      */
     const IPTC4_XMP_EXT_NS = 'http://iptc.org/std/Iptc4xmpExt/2008-02-29/';
+
     /**
      *
      */
     const PHOTOSHOP_NS = 'http://ns.adobe.com/photoshop/1.0/';
+
     /**
      *
      */
     const DC_NS = 'http://purl.org/dc/elements/1.1/';
+
     /**
      *
      */
     const XMP_RIGHTS_NS = 'http://ns.adobe.com/xap/1.0/rights/';
+
     /**
      *
      */
     const RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+
     /**
      *
      */
     const XMP_NS = "http://ns.adobe.com/xap/1.0/";
+
+    /**
+     *
+     */
+    const PHOTO_MECHANIC_NS = "http://ns.camerabits.com/photomechanic/1.0/";
 
     /**
      * @var DomDocument
@@ -66,6 +78,11 @@ class Xmp implements MetadataReaderInterface
     private $about = '';
 
     /**
+     * @var bool
+     */
+    private $hasChanges = false;
+
+    /**
      * The XMP namespaces used by this class.
      *
      * @var array
@@ -77,7 +94,8 @@ class Xmp implements MetadataReaderInterface
         'xmp' => self::XMP_NS,
         'xmpRights' => self::XMP_RIGHTS_NS,
         'Iptc4xmpCore' => self::IPTC4_XMP_CORE_NS,
-        'Iptc4xmpExt' => self::IPTC4_XMP_EXT_NS
+        'Iptc4xmpExt' => self::IPTC4_XMP_EXT_NS,
+        'photomechanic' => self::PHOTO_MECHANIC_NS
     ];
 
     /**
@@ -86,7 +104,7 @@ class Xmp implements MetadataReaderInterface
      *
      * @throws \Exception
      */
-    public function __construct($data = null, $formatOutput = true)
+    public function __construct($data = null, $formatOutput = false)
     {
         $this->dom = new DomDocument('1.0', 'UTF-8');
         $this->dom->preserveWhiteSpace = false;
@@ -121,23 +139,21 @@ class Xmp implements MetadataReaderInterface
     }
 
     /**
-     * @param boolean $formatOutput
+     * @param bool $formatOutput
+     * @return $this
      */
     public function setFormatOutput($formatOutput)
     {
         $this->dom->formatOutput = $formatOutput;
+        return $this;
     }
 
     /**
-     * Load XMP data from an image.
-     *
-     * @param JPEG $jpeg.
-     *
-     * @return Xmp
+     * @return bool
      */
-    public static function fromJPEG(JPEG $jpeg)
+    public function getFormatOutput()
     {
-
+        return $this->dom->formatOutput;
     }
 
     /**
@@ -207,7 +223,7 @@ class Xmp implements MetadataReaderInterface
         if ($node) {
             return $node->nodeValue;
         }
-        return '';
+        return null;
     }
 
     /**
@@ -232,7 +248,7 @@ class Xmp implements MetadataReaderInterface
             }
         }
 
-        return '';
+        return null;
     }
 
     /**
@@ -253,7 +269,7 @@ class Xmp implements MetadataReaderInterface
             }
         }
 
-        return '';
+        return null;
     }
 
     /**
@@ -278,7 +294,7 @@ class Xmp implements MetadataReaderInterface
             }
         }
 
-        return '';
+        return null;
     }
 
     /**
@@ -292,11 +308,24 @@ class Xmp implements MetadataReaderInterface
         $existingNode = $this->getNode($field, $ns);
 
         if ($existingNode) {
-            $existingNode->nodeValue = $value;
+            if (null === $value) {
+                /** @var $desc \DOMElement */
+                $desc = $existingNode->parentNode;
+
+                if ($existingNode instanceof \DOMAttr) {
+                    $desc->removeAttributeNode($existingNode);
+                } else {
+                    $desc->removeChild($existingNode);
+                }
+            } else {
+                $existingNode->nodeValue = $value;
+            }
         } else {
             // create new attribute
             $this->getOrCreateRDFDescription($ns)->setAttributeNS($ns, $field, $value);
         }
+
+        $this->hasChanges = true;
     }
 
     /**
@@ -314,7 +343,33 @@ class Xmp implements MetadataReaderInterface
             $this->getOrCreateRDFDescription(self::IPTC4_XMP_CORE_NS)->appendChild($parent);
         }
 
-        $parent->setAttribute($field, $value);
+        // try and find child element first
+        $childElement = false;
+
+        /** @var $child \DOMNode */
+        foreach ($parent->childNodes as $child) {
+            if ($child->nodeName == $field) {
+                $childElement = $child;
+                break;
+            }
+        }
+
+        if (null === $value) {
+            if ($childElement) {
+                $childElement->parentNode->removeChild($childElement);
+            } elseif ($parent->hasAttribute($field)) {
+                $parent->removeAttribute($field);
+            }
+        } else {
+            if ($childElement) {
+                $childElement->nodeValue = $value;
+            } else {
+                // if we do not have an element, set it as an attribute (preferred way)
+                $parent->setAttribute($field, $value);
+            }
+        }
+
+        $this->hasChanges = true;
     }
 
     /**
@@ -418,12 +473,8 @@ class Xmp implements MetadataReaderInterface
      */
     private function setList($field, $value, $type, $ns)
     {
-        $result = $this->xpath->query('/rdf:Description/' . $field . '/' . $type . '/rdf:li');
+        $result = $this->xpath->query('//rdf:Description/' . $field . '/' . $type . '/rdf:li');
         $parent = null;
-
-        if (!$value || (!is_array($value) && count($value) == 0)) {
-            // todo: remove node
-        }
 
         if ($result->length) {
             $parent = $result->item(0)->parentNode;
@@ -444,7 +495,11 @@ class Xmp implements MetadataReaderInterface
             $node->appendChild($parent);
         }
 
-        if ($parent) {
+
+        if (!$value || (!is_array($value) && count($value) == 0)) {
+            // remove element
+            $parent->parentNode->parentNode->removeChild($parent->parentNode);
+        } else {
             foreach ((array) $value as $item) {
                 $node = $this->dom->createElementNS(self::RDF_NS, 'rdf:li');
                 $node->appendChild($this->dom->createTextNode($item));
@@ -456,6 +511,8 @@ class Xmp implements MetadataReaderInterface
                 $parent->appendChild($node);
             }
         }
+
+        $this->hasChanges = true;
     }
 
     /**
@@ -471,7 +528,7 @@ class Xmp implements MetadataReaderInterface
      *
      * @param $headline string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setHeadline($headline)
     {
@@ -490,7 +547,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $caption string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setCaption($caption)
     {
@@ -509,7 +566,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $event string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setEvent($event)
     {
@@ -528,7 +585,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $location string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setLocation($location)
     {
@@ -547,7 +604,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $city string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setCity($city)
     {
@@ -566,7 +623,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $state string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setState($state)
     {
@@ -585,7 +642,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $country string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setCountry($country)
     {
@@ -604,7 +661,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $countryCode string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setCountryCode($countryCode)
     {
@@ -623,7 +680,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $subjectCodes array
      *
-     * @return Xmp
+     * @return $this
      */
     public function setIPTCSubjectCodes($subjectCodes)
     {
@@ -633,6 +690,8 @@ class Xmp implements MetadataReaderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * todo: rename to getAuthor/getCreator
      */
     public function getPhotographerName()
     {
@@ -647,7 +706,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $photographerName string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setPhotographerName($photographerName)
     {
@@ -666,7 +725,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $credit string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setCredit($credit)
     {
@@ -685,7 +744,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $photographerTitle string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setPhotographerTitle($photographerTitle)
     {
@@ -704,7 +763,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $source string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setSource($source)
     {
@@ -723,7 +782,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $copyright string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setCopyright($copyright)
     {
@@ -742,7 +801,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $copyrightUrl string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setCopyrightUrl($copyrightUrl)
     {
@@ -761,7 +820,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $rightsUsageTerms string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setRightsUsageTerms($rightsUsageTerms)
     {
@@ -780,7 +839,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $objectName string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setObjectName($objectName)
     {
@@ -799,7 +858,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $captionWriters string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setCaptionWriters($captionWriters)
     {
@@ -818,7 +877,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $instructions string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setInstructions($instructions)
     {
@@ -837,7 +896,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $category string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setCategory($category)
     {
@@ -856,7 +915,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $supplementalCategories array
      *
-     * @return Xmp
+     * @return $this
      */
     public function setSupplementalCategories($supplementalCategories)
     {
@@ -875,7 +934,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $contactAddress string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setContactAddress($contactAddress)
     {
@@ -894,7 +953,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $contactCity string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setContactCity($contactCity)
     {
@@ -913,7 +972,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $contactState string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setContactState($contactState)
     {
@@ -932,7 +991,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $contactZip string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setContactZip($contactZip)
     {
@@ -951,7 +1010,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $contactCountry string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setContactCountry($contactCountry)
     {
@@ -980,10 +1039,10 @@ class Xmp implements MetadataReaderInterface
             return null;
         }
 
-        $email = $this->xpath->query($field . '|@' . $field, $contactInfo);
+        $node = $this->xpath->query($field . '|@' . $field, $contactInfo);
 
-        if ($email->length) {
-            return $email->item(0)->nodeValue;
+        if ($node->length) {
+            return $node->item(0)->nodeValue;
         }
 
         return null;
@@ -992,7 +1051,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $contactEmail string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setContactEmail($contactEmail)
     {
@@ -1011,7 +1070,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $contactPhone string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setContactPhone($contactPhone)
     {
@@ -1030,7 +1089,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $contactUrl string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setContactUrl($contactUrl)
     {
@@ -1049,7 +1108,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $keywords array
      *
-     * @return Xmp
+     * @return $this
      */
     public function setKeywords($keywords)
     {
@@ -1068,7 +1127,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $transmissionReference string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setTransmissionReference($transmissionReference)
     {
@@ -1087,7 +1146,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $urgency string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setUrgency($urgency)
     {
@@ -1106,11 +1165,16 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $rating
      *
-     * @return Xmp
+     * @return $this
      */
     public function setRating($rating)
     {
         $this->setAttr('xmp:Rating', $rating, self::XMP_NS);
+
+        // set custom attributes used by Photo Mechanic
+        $this->setAttr('photomechanic:RatingEval', $rating, self::PHOTO_MECHANIC_NS);
+        $this->setAttr('photomechanic:RatingApply', 'True', self::PHOTO_MECHANIC_NS);
+
         return $this;
     }
 
@@ -1125,7 +1189,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param array $personsShown
      *
-     * @return Xmp
+     * @return $this
      */
     public function setPersonsShown($personsShown)
     {
@@ -1144,7 +1208,7 @@ class Xmp implements MetadataReaderInterface
     /**
      * @param $intellectualGenre string
      *
-     * @return Xmp
+     * @return $this
      */
     public function setIntellectualGenre($intellectualGenre)
     {
@@ -1153,7 +1217,8 @@ class Xmp implements MetadataReaderInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return \DateTime|null|false Returns null when attribute is not present, false when it's invalid or a \DateTime
+     *                              object when valid/
      */
     public function getDateCreated()
     {
@@ -1163,27 +1228,23 @@ class Xmp implements MetadataReaderInterface
             return null;
         }
 
-        try {
-            switch (strlen($date)) {
-                case 4: // YYYY
-                    return \DateTime::createFromFormat('Y', $date);
-                case 7: // YYYY-MM
-                    return \DateTime::createFromFormat('Y-m', $date);
-                case 10: // YYYY-MM-DD
-                    return \DateTime::createFromFormat('Y-m-d', $date);
-                default:
-                    return \DateTime::createFromFormat('c', $date);
-            }
-        } catch (\Exception $e) {
-            return null;
+        switch (strlen($date)) {
+            case 4: // YYYY
+                return \DateTime::createFromFormat('Y', $date);
+            case 7: // YYYY-MM
+                return \DateTime::createFromFormat('Y-m', $date);
+            case 10: // YYYY-MM-DD
+                return \DateTime::createFromFormat('Y-m-d', $date);
         }
+
+        return new \DateTime($date);
     }
 
     /**
      * @param \DateTime $dateCreated
      * @param string    $format
      *
-     * @return Xmp
+     * @return $this
      */
     public function setDateCreated(\DateTime $dateCreated, $format = 'c')
     {
@@ -1206,7 +1267,7 @@ class Xmp implements MetadataReaderInterface
      *
      * @param $about
      *
-     * @return Xmp
+     * @return $this
      */
     public function setAbout($about)
     {
@@ -1352,5 +1413,13 @@ class Xmp implements MetadataReaderInterface
     {
         $this->setBag('Iptc4xmpExt:OrganisationInImageCode', $featuredOrganisationCode, self::IPTC4_XMP_EXT_NS);
         return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasChanges()
+    {
+        return $this->hasChanges;
     }
 }

@@ -1,0 +1,123 @@
+<?xpacket begin='﻿' id='W5M0MpCehiHzreSzNTczkc9d'?>
+<x:xmpmeta xmlns:x='adobe:ns:meta/' x:xmptk='XMPCore'>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+
+ <rdf:Description rdf:about=''
+  xmlns:Iptc4xmpCore='http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/'>
+  <Iptc4xmpCore:CreatorContactInfo rdf:parseType='Resource'>
+   <Iptc4xmpCore:CiEmailWork>sales@example.com</Iptc4xmpCore:CiEmailWork>
+   <Iptc4xmpCore:CiTelWork>+44 7901 123456</Iptc4xmpCore:CiTelWork>
+   <Iptc4xmpCore:CiUrlWork>http://www.example.com</Iptc4xmpCore:CiUrlWork>
+   <Iptc4xmpCore:CiAdrExtadr>123 Street Road</Iptc4xmpCore:CiAdrExtadr>
+   <Iptc4xmpCore:CiAdrCity>London</Iptc4xmpCore:CiAdrCity>
+   <Iptc4xmpCore:CiAdrRegion>Greater London</Iptc4xmpCore:CiAdrRegion>
+   <Iptc4xmpCore:CiAdrPcode>NW1 1AA</Iptc4xmpCore:CiAdrPcode>
+   <Iptc4xmpCore:CiAdrCtry>England</Iptc4xmpCore:CiAdrCtry>
+  </Iptc4xmpCore:CreatorContactInfo>
+  <Iptc4xmpCore:CountryCode>GBR</Iptc4xmpCore:CountryCode>
+  <Iptc4xmpCore:IntellectualGenre>Intellectual genre</Iptc4xmpCore:IntellectualGenre>
+  <Iptc4xmpCore:Location>Buckingham Palace</Iptc4xmpCore:Location>
+  <Iptc4xmpCore:Scene>
+    <rdf:Bag>
+      <rdf:li>IPTC Scene</rdf:li>
+    </rdf:Bag>
+  </Iptc4xmpCore:Scene>
+  <Iptc4xmpCore:SubjectCode>
+   <rdf:Bag>
+    <rdf:li>subj:15054000</rdf:li>
+   </rdf:Bag>
+  </Iptc4xmpCore:SubjectCode>
+ </rdf:Description>
+
+ <rdf:Description rdf:about=''
+  xmlns:Iptc4xmpExt='http://iptc.org/std/Iptc4xmpExt/2008-02-29/'>
+  <Iptc4xmpExt:Event>Event Name</Iptc4xmpExt:Event>
+  <Iptc4xmpExt:OrganisationInImageCode>
+    <rdf:Bag>
+      <rdf:li>Featured Organisation Code</rdf:li>
+    </rdf:Bag>
+    </Iptc4xmpExt:OrganisationInImageCode>
+  <Iptc4xmpExt:OrganisationInImageName>
+    <rdf:Bag>
+      <rdf:li>Featured Organisation</rdf:li>
+    </rdf:Bag>
+  </Iptc4xmpExt:OrganisationInImageName>
+  <Iptc4xmpExt:PersonInImage>
+    <rdf:Bag>
+      <rdf:li>A person</rdf:li>
+      <rdf:li>Another person</rdf:li>
+    </rdf:Bag>
+  </Iptc4xmpExt:PersonInImage>
+ </rdf:Description>
+
+ <rdf:Description rdf:about=''
+  xmlns:dc='http://purl.org/dc/elements/1.1/'>
+  <dc:creator>
+   <rdf:Seq>
+    <rdf:li>Photographer</rdf:li>
+   </rdf:Seq>
+  </dc:creator>
+  <dc:description>
+   <rdf:Alt>
+    <rdf:li xml:lang='x-default'>José Mourinho</rdf:li>
+   </rdf:Alt>
+  </dc:description>
+  <dc:rights>
+   <rdf:Alt>
+    <rdf:li xml:lang='x-default'>example.com</rdf:li>
+   </rdf:Alt>
+  </dc:rights>
+  <dc:subject>
+   <rdf:Bag>
+    <rdf:li>A keyword</rdf:li>
+    <rdf:li>Another keyword</rdf:li>
+   </rdf:Bag>
+  </dc:subject>
+  <dc:title>
+   <rdf:Alt>
+    <rdf:li xml:lang='x-default'>OBJECT_NAME</rdf:li>
+   </rdf:Alt>
+  </dc:title>
+ </rdf:Description>
+
+ <rdf:Description rdf:about=''
+  xmlns:photoshop='http://ns.adobe.com/photoshop/1.0/'>
+  <photoshop:AuthorsPosition>Staff</photoshop:AuthorsPosition>
+  <photoshop:CaptionWriter>Description Writers</photoshop:CaptionWriter>
+  <photoshop:Category>SPO</photoshop:Category>
+  <photoshop:City>London</photoshop:City>
+  <photoshop:Country>England</photoshop:Country>
+  <photoshop:Credit>Photographer/Agency</photoshop:Credit>
+  <photoshop:Headline>Headline</photoshop:Headline>
+  <photoshop:Instructions>All rights reserved.</photoshop:Instructions>
+  <photoshop:Source>example.com</photoshop:Source>
+  <photoshop:State>Greater London</photoshop:State>
+  <photoshop:SupplementalCategories>
+    <rdf:Bag>
+      <rdf:li>Football</rdf:li>
+      <rdf:li>Soccer</rdf:li>
+      <rdf:li>Sport</rdf:li>
+    </rdf:Bag>
+  </photoshop:SupplementalCategories>
+  <photoshop:TransmissionReference>JOB001</photoshop:TransmissionReference>
+  <photoshop:Urgency>2</photoshop:Urgency>
+ </rdf:Description>
+
+ <rdf:Description rdf:about=''
+  xmlns:xmp='http://ns.adobe.com/xap/1.0/'>
+  <xmp:Rating>4</xmp:Rating>
+ </rdf:Description>
+
+ <rdf:Description rdf:about=''
+  xmlns:xmpRights='http://ns.adobe.com/xap/1.0/rights/'>
+  <xmpRights:Marked>True</xmpRights:Marked>
+  <xmpRights:UsageTerms>
+    <rdf:Alt>
+      <rdf:li xml:lang="x-default">All rights reserved.</rdf:li>
+    </rdf:Alt>
+  </xmpRights:UsageTerms>
+  <xmpRights:WebStatement>www.example.com</xmpRights:WebStatement>
+ </rdf:Description>
+</rdf:RDF>
+</x:xmpmeta>
+<?xpacket end='w'?>

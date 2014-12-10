@@ -1,14 +1,12 @@
 <?php
-namespace CSD\Photo\Metadata\Reader;
-
-use CSD\Photo\Metadata\Exif;
-use CSD\Photo\Metadata\Iptc;
-use CSD\Photo\Metadata\Xmp;
+namespace CSD\Photo\Metadata;
 
 /**
  * Aggregate metadata reader. Uses XMP to get metadata, falls back to IPTC where available.
+ *
+ * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
-class AggregateReader implements MetadataReaderInterface
+class Aggregate
 {
     /**
      * @var Xmp
@@ -113,14 +111,6 @@ class AggregateReader implements MetadataReaderInterface
     /**
      * {@inheritdoc}
      */
-    public function getEvent()
-    {
-        return $this->getMeta('Event', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getLocation()
     {
         return $this->getMeta('Location', ['xmp', 'iptc']);
@@ -201,22 +191,6 @@ class AggregateReader implements MetadataReaderInterface
     /**
      * {@inheritdoc}
      */
-    public function getCopyrightUrl()
-    {
-        return $this->getMeta('CopyrightUrl', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRightsUsageTerms()
-    {
-        return $this->getMeta('RightsUsageTerms', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getObjectName()
     {
         return $this->getMeta('ObjectName', ['xmp', 'iptc']);
@@ -257,70 +231,6 @@ class AggregateReader implements MetadataReaderInterface
     /**
      * {@inheritdoc}
      */
-    public function getContactAddress()
-    {
-        return $this->getMeta('ContactAddress', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactCity()
-    {
-        return $this->getMeta('ContactCity', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactState()
-    {
-        return $this->getMeta('ContactState', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactZip()
-    {
-        return $this->getMeta('ContactZip', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactCountry()
-    {
-        return $this->getMeta('ContactCountry', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactEmail()
-    {
-        return $this->getMeta('ContactEmail', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactPhone()
-    {
-        return $this->getMeta('ContactPhone', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContactUrl()
-    {
-        return $this->getMeta('ContactUrl', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getTransmissionReference()
     {
         return $this->getMeta('TransmissionReference', ['xmp', 'iptc']);
@@ -337,25 +247,9 @@ class AggregateReader implements MetadataReaderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRating()
-    {
-        return $this->getMeta('Rating', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getKeywords()
     {
         return $this->getMeta('Keywords', ['xmp', 'iptc']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIPTCSubjectCodes()
-    {
-        return $this->getMeta('IPTCSubjectCodes', ['xmp', 'iptc']);
     }
 
     /**
@@ -374,45 +268,5 @@ class AggregateReader implements MetadataReaderInterface
         } else {
             $createdAt = new DateTime;
         }
-    }
-
-    /**
-     * Get intellectual genre
-     *
-     * @return string
-     */
-    public function getIntellectualGenre()
-    {
-        return $this->getMeta('IntellectualGenre', ['xmp', 'iptc']);
-    }
-
-    /**
-     * Get featured organisation name
-     *
-     * @return string
-     */
-    public function getFeaturedOrganisationName()
-    {
-        return $this->getMeta('FeaturedOrganisationName', ['xmp', 'iptc']);
-    }
-
-    /**
-     * Get featured organisation code
-     *
-     * @return string
-     */
-    public function getFeaturedOrganisationCode()
-    {
-        return $this->getMeta('FeaturedOrganisationCode', ['xmp', 'iptc']);
-    }
-
-    /**
-     * Get IPTC scene
-     *
-     * @return string
-     */
-    public function getIPTCScene()
-    {
-        return $this->getMeta('IPTCScene', ['xmp', 'iptc']);
     }
 }

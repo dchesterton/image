@@ -2,7 +2,7 @@
 
 namespace CSD\Photo\Image;
 
-use CSD\Photo\Metadata\Reader\AggregateReader;
+use CSD\Photo\Metadata\Reader\Aggregate;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
@@ -23,7 +23,7 @@ abstract class AbstractImage implements ImageInterface
     }
 
     /**
-     * @return AggregateReader
+     * @return Aggregate
      */
     public function getAggregateMeta()
     {
@@ -31,8 +31,19 @@ abstract class AbstractImage implements ImageInterface
         $exif = $this->getExif();
         $iptc = $this->getIptc();
 
-        $reader = new AggregateReader($xmp, $exif, $iptc);
+        $reader = new Aggregate($xmp, $exif, $iptc);
 
         return $reader;
+    }
+
+    public function save($filename = null)
+    {
+        $filename = $filename ?: $this->filename;
+
+        if (!$filename) {
+            throw new \Exception('Must provide a filename');
+        }
+
+        file_put_contents($filename, $this->getBytes());
     }
 }
