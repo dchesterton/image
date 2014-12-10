@@ -64,7 +64,7 @@ class Chunk
     public function getCrc()
     {
         $crc = crc32($this->type . $this->data);
-        $hex = str_pad(dechex($crc), 8, '0', STR_PAD_LEFT); // pad it out to 4 bytes
+        $hex = str_pad(dechex($crc), 8, '0', STR_PAD_LEFT); // pad to 4 bytes
 
         return hex2bin($hex);
     }

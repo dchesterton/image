@@ -33,7 +33,7 @@ class PNG extends AbstractImage
      * @param string $contents
      * @param string $filename
      */
-    public function __construct($contents, $filename)
+    public function __construct($contents, $filename = null)
     {
         $this->chunks = $this->getChunksFromContents($contents);
         $this->filename = $filename;

@@ -22,7 +22,7 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAggregate()
     {
-        $image = $this->getMockForAbstractClass(AbstractImage::class);
+        $image = $this->getMockForAbstractImage();
         $image->expects($this->once())->method('getXmp')->will($this->returnValue(m::mock(Xmp::class)));
         $image->expects($this->once())->method('getIptc')->will($this->returnValue(m::mock(Iptc::class)));
         $image->expects($this->once())->method('getExif')->will($this->returnValue(m::mock(Exif::class)));
@@ -37,7 +37,7 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAggregateWithUnsupportedTypes()
     {
-        $image = $this->getMockForAbstractClass(AbstractImage::class);
+        $image = $this->getMockForAbstractImage();
         $image->expects($this->once())->method('getXmp')->will($this->throwException(new UnsupportedException));
         $image->expects($this->once())->method('getIptc')->will($this->throwException(new UnsupportedException));
         $image->expects($this->once())->method('getExif')->will($this->throwException(new UnsupportedException));
@@ -55,12 +55,10 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
     {
         $tmp = tempnam(sys_get_temp_dir(), 'PNG');
 
-        $image = $this->getMockForAbstractClass(AbstractImage::class);
+        $image = $this->getMockForAbstractImage();
         $image->expects($this->once())->method('getBytes')->will($this->returnValue('Test'));
 
-        $return = $image->setFilename($tmp);
-
-        $this->assertSame($image, $return);
+        $this->assertSame($image, $image->setFilename($tmp)); // test fluid interface
 
         $image->save();
 
@@ -74,9 +72,8 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
     {
         $tmp = tempnam(sys_get_temp_dir(), 'PNG');
 
-        $image = $this->getMockForAbstractClass(AbstractImage::class);
+        $image = $this->getMockForAbstractImage();
         $image->expects($this->once())->method('getBytes')->will($this->returnValue('Test'));
-
         $image->save($tmp);
 
         $this->assertEquals('Test', file_get_contents($tmp));
@@ -89,7 +86,15 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
      */
     public function testSaveWithNoFilename()
     {
-        $image = $this->getMockForAbstractClass(AbstractImage::class);
+        $image = $this->getMockForAbstractImage();
         $image->save();
+    }
+
+    /**
+     * @return AbstractImage|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getMockForAbstractImage()
+    {
+        return $this->getMockForAbstractClass(AbstractImage::class);
     }
 }
