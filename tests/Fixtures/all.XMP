@@ -42,7 +42,9 @@
    Iptc4xmpCore:IntellectualGenre="Intellectual genre"
    Iptc4xmpExt:Event="Event Name"
    xmp:Label="Winner alt"
-   xmp:Rating="4">
+   xmp:Rating="4"
+   xmp:CreatorTool="Creator Tool"
+   >
    <photoshop:SupplementalCategories>
     <rdf:Bag>
      <rdf:li>Football</rdf:li>

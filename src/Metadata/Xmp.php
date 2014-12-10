@@ -17,8 +17,6 @@ use DOMXPath;
  * Class to read XMP metadata from an image.
  *
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
- *
- * todo: add xmp:CreatorTool
  */
 class Xmp
 {
@@ -1174,6 +1172,26 @@ class Xmp
         // set custom attributes used by Photo Mechanic
         $this->setAttr('photomechanic:RatingEval', $rating, self::PHOTO_MECHANIC_NS);
         $this->setAttr('photomechanic:RatingApply', 'True', self::PHOTO_MECHANIC_NS);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCreatorTool()
+    {
+        return $this->get('xmp:CreatorTool', self::XMP_NS);
+    }
+
+    /**
+     * @param $creatorTool
+     *
+     * @return $this
+     */
+    public function setCreatorTool($creatorTool)
+    {
+        $this->setAttr('xmp:CreatorTool', $creatorTool, self::XMP_NS);
 
         return $this;
     }

@@ -2,8 +2,6 @@
 namespace CSD\Photo\Metadata;
 
 /**
- * Aggregate metadata reader. Uses XMP to get metadata, falls back to IPTC where available.
- *
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
 class Aggregate

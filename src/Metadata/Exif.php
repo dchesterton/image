@@ -22,7 +22,7 @@ class Exif
      *
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * Constructor.

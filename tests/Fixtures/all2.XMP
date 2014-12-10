@@ -105,6 +105,7 @@
 
  <rdf:Description rdf:about=''
   xmlns:xmp='http://ns.adobe.com/xap/1.0/'>
+  <xmp:CreatorTool>Creator Tool</xmp:CreatorTool>
   <xmp:Rating>4</xmp:Rating>
  </rdf:Description>
 

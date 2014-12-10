@@ -8,7 +8,7 @@ use CSD\Photo\Metadata\Iptc;
 use CSD\Photo\Metadata\Xmp;
 
 /**
- *
+ * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
 interface ImageInterface
 {
@@ -22,8 +22,6 @@ interface ImageInterface
 
     /**
      * @return string
-     *
-     * todo: think of better name
      */
     public function getBytes();
 
