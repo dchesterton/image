@@ -74,15 +74,16 @@ $image->save() // or $image->getBytes()
 
 ### Loading specific image type
 
-When file type is known, you can load the file type directly.
+When file type is known, you can load the file type directly using the file types' `fromFile` method.
 
 ```php
-$jpeg = JPEG::fromFile($filename);
+$jpeg = JPEG::fromFile('image.jpg');
+$png = PNG::fromFile('image.png');
 ```
 
 ### Instantiate from bytes
 
-If you only have the raw bytes (from database, ImageMagick etc.) you can instantiate objects from them.
+If you don't have a file to work with but you do have the image stored in a string (from database, ImageMagick etc.) you can easily instantiate an object from the string.
 
 ```php
 $data = ...
@@ -90,28 +91,44 @@ $data = ...
 $jpeg = new JPEG($data);
 $jpeg->getXmp()->setHeadline('Test headline');
 
-$jpeg->save('out.jpg');
+$jpeg->save('out.jpg'); // or $jpeg->getBytes();
 ```
 
 ### Aggregate metadata
 
-When just want a piece of meta data and don't care whether it's from XMP/IPTC or even EXIF, you can use the aggregate meta object.
+When just want a piece of metadata and don't care whether it's from XMP, IPTC or EXIF, you can use the aggregate meta object.
 
 ```php
 $image = Image::fromFile($filename);
-$headline = $image->getAggregateMeta()->getHeadline();
+$headline = $image->getAggregate()->getHeadline();
 ```
 
-You can even modify meta data on an aggregate level
+By default it checks XMP first, then IPTC, then EXIF but you can change the priority:
+
+```php
+$aggregate = $image->getAggregate();
+$aggregate->setPriority(['exif', 'iptc', 'xmp']);
+
+$aggregate->getHeadline(); // will now check EXIF first, then IPTC, then XMP
+```
+
+You can also exclude a metadata type if you do not want to use it:
+
+```php
+$aggregate->setPriority(['iptc', 'xmp']);
+$aggregate->getHeadline(); // will only check IPTC and XMP
+```
+
+You can also modify metadata on an aggregate level:
 
 ```php
 $image = Image::fromFile($filename);
-$image->getAggregateMeta()->setHeadline('Headline');
+$image->getAggregate()->setHeadline('Headline');
 
 $image->save();
 ```
 
-This would set the headline in both XMP and IPTC.
+This would set the headline in both XMP and IPTC. For maximum compatibility with other software it's recommended to use the aggregate metadata object where available.
 
 #### Get GPS data
 
