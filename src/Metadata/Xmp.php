@@ -162,12 +162,12 @@ class Xmp
      */
     public static function fromArray($array)
     {
-        $xmp = new self();
+        $xmp = new self;
 
         foreach ($array as $field => $value) {
             $setter = 'set' . ucfirst($field);
 
-            if (method_exists($xmp, $setter) && $value) {
+            if (method_exists($xmp, $setter) && null !== $value) {
                 $xmp->$setter($value);
             }
         }
