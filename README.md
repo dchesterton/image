@@ -1,20 +1,21 @@
-csd-photo
+CSD Photo
 =========
 
-Image types
+Supported image types:
    - JPEG
    - TIFF
    - PNG
    - RAW FORMATS
    	- CR2, NEF, etc.
 
-Image meta types
+Supported image meta types:
    - XMP
    - IPTC
    - EXIF
 
 // USE CASE #1, modifying existing meta
 
+```php
 $image = Image::fromFile($filename);
 
 $xmp = $image->getXmp();
@@ -22,27 +23,32 @@ $xmp->setHeadline('A test headline');
 $xmp->setCaption('Caption');
 
 $image->save();
+```
 
+### Standalone XMP
 
-// USE CASE #2, generating standalone XMP
+#### Generating standalone XMP
 
+```php
 $xmp = new Xmp;
 $xmp->setHeadline('A headline')
 ...
 
 $data = $xmp->getXml();
+```
 
+#### Modifying standalone XMP
 
-// USE CASE #2.1, modifying standalone XMP
-
+```php
 $xmp = new Xmp($data); // or Xmp::fromFile($filename)
 $xmp->setHeadline('A headline');
 
 $data = $xmp->getXml();
+```
 
+### Setting/replacing XMP in image
 
-// USE CASE #3, setting own meta
-
+```php
 $xmp = new Xmp;
 $xmp->setHeadline('A headline');
 ...
@@ -51,44 +57,53 @@ $image = Image::fromFile($filename);
 $image->setXmp($xmp);
 
 $image->save() // or $image->getBytes()
+```
 
+### Loading specific image type
 
+When file type is known, you can load the file type directly.
 
-// USE CASE #4, loading specific image type
-
+```php
 $jpeg = JPEG::fromFile($filename);
+```
 
+### Modify from raw bytes
 
-// USE CASE #5, modify raw bytes, possibly stored in DB or ImageMagick or whatever...
+You can also instantiate objects from the raw bytes
 
+```php
 $data = ...
 
 #jpeg = new JPEG($data);
 $jpeg->getXmp()->setHeadline('Test headline');
 
 $data = $jpeg->getBytes();
+```
 
+### Aggregate metadata
 
-// USE CASE #6, just want a piece of meta data, don't care whether it's from XMP/IPTC or even EXIF
+When just want a piece of meta data and don't care whether it's from XMP/IPTC or even EXIF, you can use the aggregate meta object.
 
+```php
 $image = Image::fromFile($filename);
 $headline = $image->getAggregateMeta()->getHeadline();
+```
 
-// USE CASE #7, set a piece of meta data across all
+You can even modify meta data on an aggregate level
 
+```php
 $image = Image::fromFile($filename);
-$image->getAggregateMeta()->setHeadline($headline);
+$image->getAggregateMeta()->setHeadline('Headline');
 
-$image->save(); // or $image->getBytes()
+$image->save();
+```
 
+This would set the headline in both XMP and IPTC.
 
-// USE CASE #7, get GPS data
+#### Get GPS data
 
 $image = ...
 $gps = $image->getAggregateMeta()->getGPS(); // checks EXIF and XMP
 // or $gps = $image->getExif()->getGPS();
 
 $lat = $gps->getLatitude();
-
-
-
