@@ -51,7 +51,7 @@ interface ImageInterface
     /**
      * @return Aggregate
      */
-    public function getAggregateMeta();
+    public function getAggregate();
 
     public static function fromFile($filename);
 }

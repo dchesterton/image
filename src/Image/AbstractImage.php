@@ -29,7 +29,7 @@ abstract class AbstractImage implements ImageInterface
     /**
      * @return Aggregate
      */
-    public function getAggregateMeta()
+    public function getAggregate()
     {
         try {
             $xmp = $this->getXmp();

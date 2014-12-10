@@ -27,7 +27,7 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
         $image->expects($this->once())->method('getIptc')->will($this->returnValue(m::mock(Iptc::class)));
         $image->expects($this->once())->method('getExif')->will($this->returnValue(m::mock(Exif::class)));
 
-        $aggregate = $image->getAggregateMeta();
+        $aggregate = $image->getAggregate();
 
         $this->assertInstanceOf(Aggregate::class, $aggregate);
     }
@@ -42,7 +42,7 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
         $image->expects($this->once())->method('getIptc')->will($this->throwException(new UnsupportedException));
         $image->expects($this->once())->method('getExif')->will($this->throwException(new UnsupportedException));
 
-        $aggregate = $image->getAggregateMeta();
+        $aggregate = $image->getAggregate();
 
         $this->assertInstanceOf(Aggregate::class, $aggregate);
     }
