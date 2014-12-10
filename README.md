@@ -13,7 +13,17 @@ Supported image meta types:
    - IPTC
    - EXIF
 
-// USE CASE #1, modifying existing meta
+### Get metadata
+
+```php
+$image = Image::fromFile($filename);
+
+$headline = $image->getXmp()->getHeadline();
+$camera = $image->getExif()->getCamera();
+...
+```
+
+### Modify existing metadata
 
 ```php
 $image = Image::fromFile($filename);
@@ -21,6 +31,8 @@ $image = Image::fromFile($filename);
 $xmp = $image->getXmp();
 $xmp->setHeadline('A test headline');
 $xmp->setCaption('Caption');
+
+$image->getIptc()->setCategory('Category');
 
 $image->save();
 ```
@@ -67,9 +79,9 @@ When file type is known, you can load the file type directly.
 $jpeg = JPEG::fromFile($filename);
 ```
 
-### Modify from raw bytes
+### Instantiate from bytes
 
-You can also instantiate objects from the raw bytes
+If you only have the raw bytes (from database, ImageMagick etc.) you can instantiate objects from them.
 
 ```php
 $data = ...
@@ -77,7 +89,7 @@ $data = ...
 #jpeg = new JPEG($data);
 $jpeg->getXmp()->setHeadline('Test headline');
 
-$data = $jpeg->getBytes();
+$jpeg->save('out.jpg');
 ```
 
 ### Aggregate metadata
@@ -102,8 +114,10 @@ This would set the headline in both XMP and IPTC.
 
 #### Get GPS data
 
+```php
 $image = ...
 $gps = $image->getAggregateMeta()->getGPS(); // checks EXIF and XMP
 // or $gps = $image->getExif()->getGPS();
 
 $lat = $gps->getLatitude();
+```
