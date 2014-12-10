@@ -28,7 +28,8 @@ class Aggregate
         'supplementalCategories' => ['xmp', 'iptc'],
         'transmissionReference' => ['xmp', 'iptc'],
         'urgency' => ['xmp', 'iptc'],
-        'keywords' => ['xmp', 'iptc']
+        'keywords' => ['xmp', 'iptc'],
+        'dateCreated' => ['xmp', 'iptc']
     ];
 
     /**
@@ -52,7 +53,11 @@ class Aggregate
     private $priority;
 
     /**
+     * Constructor
      *
+     * @param Xmp  $xmp
+     * @param Iptc $iptc
+     * @param Exif $exif
      */
     public function __construct(Xmp $xmp = null, Iptc $iptc = null, Exif $exif = null)
     {
@@ -135,7 +140,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getHeadline()
     {
@@ -153,7 +158,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getCaption()
     {
@@ -171,7 +176,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getLocation()
     {
@@ -189,7 +194,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getCity()
     {
@@ -207,7 +212,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getState()
     {
@@ -225,7 +230,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getCountry()
     {
@@ -243,7 +248,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getCountryCode()
     {
@@ -261,7 +266,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getPhotographerName()
     {
@@ -279,7 +284,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getCredit()
     {
@@ -297,7 +302,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getPhotographerTitle()
     {
@@ -315,7 +320,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getSource()
     {
@@ -333,7 +338,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getCopyright()
     {
@@ -351,7 +356,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getObjectName()
     {
@@ -369,7 +374,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getCaptionWriters()
     {
@@ -387,7 +392,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getInstructions()
     {
@@ -405,7 +410,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getCategory()
     {
@@ -423,7 +428,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getSupplementalCategories()
     {
@@ -441,7 +446,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getTransmissionReference()
     {
@@ -459,7 +464,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return string|null
      */
     public function getUrgency()
     {
@@ -477,7 +482,7 @@ class Aggregate
     }
 
     /**
-     * @return $this
+     * @return array|null
      */
     public function getKeywords()
     {
@@ -495,20 +500,20 @@ class Aggregate
     }
 
     /**
-     *
+     * @return \DateTime|null
      */
-    public function getCreatedAt()
+    public function getDateCreated()
     {
-        return new \DateTime('now');
+        return $this->get('dateCreated');
+    }
 
-
-        // get image date
-        if ($iptc->has('2#055') && $iptc->has('2#060')) {
-            $createdAt = new DateTime($iptc->get('2#055') . ' ' . $iptc->get('2#060'));
-        } elseif ($xmp->get('photoshop:DateCreated')) {
-            $createdAt = new DateTime($xmp->get('photoshop:DateCreated'));
-        } else {
-            $createdAt = new DateTime;
-        }
+    /**
+     * @param \DateTime $dateCreated
+     *
+     * @return $this
+     */
+    public function setDateCreated(\DateTime $dateCreated)
+    {
+        return $this->set('dateCreated', $dateCreated);
     }
 }

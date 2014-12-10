@@ -40,7 +40,8 @@ class AggregateTest extends \PHPUnit_Framework_TestCase
             ['supplementalCategories'],
             ['transmissionReference'],
             ['urgency'],
-            ['keywords']
+            ['keywords'],
+            ['dateCreated']
         ];
     }
 
@@ -53,20 +54,23 @@ class AggregateTest extends \PHPUnit_Framework_TestCase
     {
         $method = 'get' . ucfirst($field);
 
+        $xmpValue = ($field == 'dateCreated')? new \DateTime: 'XMP value';
+        $iptcValue = ($field == 'dateCreated')? new \DateTime: 'IPTC value';
+
         $xmp = M::mock(Xmp::class);
-        $xmp->shouldReceive($method)->once()->andReturn('XMP value');
+        $xmp->shouldReceive($method)->once()->andReturn($xmpValue);
 
         $iptc = M::mock(Iptc::class);
-        $iptc->shouldReceive($method)->once()->andReturn('IPTC value');
+        $iptc->shouldReceive($method)->once()->andReturn($iptcValue);
 
         $aggregate = new Aggregate($xmp, $iptc);
 
-        $this->assertEquals('XMP value', $aggregate->$method());
+        $this->assertEquals($xmpValue, $aggregate->$method());
 
         // change priority so IPTC is first
         $aggregate->setPriority(['iptc', 'xmp']);
 
-        $this->assertEquals('IPTC value', $aggregate->$method());
+        $this->assertEquals($iptcValue, $aggregate->$method());
 
         // change priority so nothing should be returned
         $aggregate->setPriority([]);
@@ -113,7 +117,7 @@ class AggregateTest extends \PHPUnit_Framework_TestCase
     public function testSetXmpIptcField($field)
     {
         $method = 'set' . ucfirst($field);
-        $value = 'value';
+        $value = ($field == 'dateCreated')? new \DateTime: 'value';
 
         $xmp = M::mock(Xmp::class);
         $xmp->shouldReceive($method)->once()->with($value);
@@ -134,7 +138,7 @@ class AggregateTest extends \PHPUnit_Framework_TestCase
     public function testSetXmpIptcFieldWhenNoProviders($field)
     {
         $method = 'set' . ucfirst($field);
-        $value = 'value';
+        $value = ($field == 'dateCreated')? new \DateTime: 'value';
 
         $aggregate = new Aggregate;
 

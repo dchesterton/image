@@ -31,7 +31,9 @@ class Iptc
         'supplementalCategories' => '2#020',
         'transmissionReference'  => '2#103',
         'urgency'                => '2#010',
-        'keywords'               => '2#025'
+        'keywords'               => '2#025',
+        'date'                   => '2#055',
+        'time'                   => '2#060',
     ];
 
     /**
@@ -39,7 +41,7 @@ class Iptc
      *
      * @var array
      */
-    private $data = [];
+    private $data;
 
     /**
      * @var bool
@@ -270,18 +272,6 @@ class Iptc
     }
 
     /**
-     * Returns whether the field is present in the data. It does not check if the field is empty or null.
-     *
-     * @param string $field The IPTC field to check, e.g. 2#114.
-     *
-     * @return boolean
-     */
-    public function has($field)
-    {
-        return (is_array($this->data) && isset($this->data[$field]));
-    }
-
-    /**
      * Returns data for the given IPTC field. Returns null if the field does not exist.
      *
      * @param string  $field  The field to return.
@@ -289,11 +279,11 @@ class Iptc
      *
      * @return string|null
      */
-    public function get($field, $single = true)
+    private function get($field, $single = true)
     {
         $code = $this->fields[$field];
 
-        if ($this->has($code)) {
+        if (isset($this->data[$code])) {
             return ($single)? $this->data[$code][0]: $this->data[$code];
         }
 
@@ -306,7 +296,7 @@ class Iptc
      *
      * @return $this
      */
-    public function set($field, $value)
+    private function set($field, $value)
     {
         $code = $this->fields[$field];
 
@@ -674,6 +664,33 @@ class Iptc
     public function setKeywords($keywords)
     {
         return $this->set('keywords', $keywords);
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateCreated()
+    {
+        $date = $this->get('date');
+        $time = $this->get('time');
+
+        if ($date && $time) {
+            return new \DateTime($date . ' ' . $time);
+        }
+        return null;
+    }
+
+    /**
+     * @param \DateTime $date
+     *
+     * @return $this
+     */
+    public function setDateCreated(\DateTime $date)
+    {
+        //$this->set('date', );
+        //$this->set('time', );
+
+        return $this;
     }
 
     /**
