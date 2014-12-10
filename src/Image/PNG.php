@@ -20,6 +20,11 @@ class PNG extends AbstractImage
     private $xmp;
 
     /**
+     * @var bool
+     */
+    private $hasNewXmp = false;
+
+    /**
      * @var PNG\Chunk[]
      */
     private $chunks;
@@ -39,7 +44,7 @@ class PNG extends AbstractImage
      */
     public function getBytes()
     {
-        if ($this->xmp && $this->xmp->hasChanges()) {
+        if ($this->xmp && ($this->xmp->hasChanges() || $this->hasNewXmp)) {
             $data = "XML:com.adobe.xmp\x00\x00\x00\x00\x00" . $this->xmp->getXml();
 
             $xmpChunk = $this->getXmpChunk();
@@ -85,6 +90,19 @@ class PNG extends AbstractImage
         }
 
         return $this->xmp;
+    }
+
+    /**
+     * @param Xmp $xmp
+     *
+     * @return $this
+     */
+    public function setXmp(Xmp $xmp)
+    {
+        $this->xmp = $xmp;
+        $this->hasNewXmp = true;
+
+        return $this;
     }
 
     /**

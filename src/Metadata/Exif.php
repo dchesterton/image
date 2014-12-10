@@ -1,13 +1,4 @@
 <?php
-/**
- * This file is part of the Photo Store package.
- *
- * (c) Daniel Chesterton <daniel@chestertondevelopment.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace CSD\Photo\Metadata;
 
 /**

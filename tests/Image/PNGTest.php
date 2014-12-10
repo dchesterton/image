@@ -131,6 +131,25 @@ class PNGTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::getBytes
+     * @covers ::setXmp
+     */
+    public function testSavePNGWithNewXmpObject()
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'PNG');
+
+        $xmp = new Xmp;
+        $xmp->setHeadline('PHP headline');
+
+        $png = PNG::fromFile(__DIR__ . '/../Fixtures/nometa.png');
+        $png->setXmp($xmp);
+        $png->save($tmp);
+
+        $newPng = PNG::fromFile($tmp);
+        $this->assertEquals('PHP headline', $newPng->getXmp()->getHeadline());
+    }
+
+    /**
+     * @covers ::getBytes
      */
     public function testSavePNGWithoutChanges()
     {

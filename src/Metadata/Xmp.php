@@ -1,13 +1,4 @@
 <?php
-/**
- * This file is part of the Photo Store package.
- *
- * (c) Daniel Chesterton <daniel@chestertondevelopment.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace CSD\Photo\Metadata;
 
 use DomDocument;
@@ -214,7 +205,7 @@ class Xmp
      *
      * @return string|null
      */
-    private function get($field, $namespace)
+    private function getAttr($field, $namespace)
     {
         $node = $this->getNode($field, $namespace);
 
@@ -514,11 +505,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getHeadline()
     {
-        return $this->get('photoshop:Headline', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:Headline', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -535,7 +526,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCaption()
     {
@@ -554,11 +545,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getEvent()
     {
-        return $this->get('Iptc4xmpExt:Event', self::IPTC4_XMP_EXT_NS);
+        return $this->getAttr('Iptc4xmpExt:Event', self::IPTC4_XMP_EXT_NS);
     }
 
     /**
@@ -573,11 +564,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getLocation()
     {
-        return $this->get('Iptc4xmpCore:Location', self::IPTC4_XMP_CORE_NS);
+        return $this->getAttr('Iptc4xmpCore:Location', self::IPTC4_XMP_CORE_NS);
     }
 
     /**
@@ -592,11 +583,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCity()
     {
-        return $this->get('photoshop:City', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:City', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -611,11 +602,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getState()
     {
-        return $this->get('photoshop:State', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:State', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -630,11 +621,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCountry()
     {
-        return $this->get('photoshop:Country', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:Country', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -649,11 +640,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCountryCode()
     {
-        return $this->get('Iptc4xmpCore:CountryCode', self::IPTC4_XMP_CORE_NS);
+        return $this->getAttr('Iptc4xmpCore:CountryCode', self::IPTC4_XMP_CORE_NS);
     }
 
     /**
@@ -668,7 +659,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getIPTCSubjectCodes()
     {
@@ -713,11 +704,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCredit()
     {
-        return $this->get('photoshop:Credit', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:Credit', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -732,11 +723,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getPhotographerTitle()
     {
-        return $this->get('photoshop:AuthorsPosition', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:AuthorsPosition', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -751,11 +742,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getSource()
     {
-        return $this->get('photoshop:Source', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:Source', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -770,7 +761,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCopyright()
     {
@@ -789,11 +780,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCopyrightUrl()
     {
-        return $this->get('xmpRights:WebStatement', self::XMP_RIGHTS_NS);
+        return $this->getAttr('xmpRights:WebStatement', self::XMP_RIGHTS_NS);
     }
 
     /**
@@ -808,7 +799,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getRightsUsageTerms()
     {
@@ -827,11 +818,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getObjectName()
     {
-        return $this->get('dc:title', self::DC_NS);
+        return $this->getAttr('dc:title', self::DC_NS);
     }
 
     /**
@@ -846,11 +837,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCaptionWriters()
     {
-        return $this->get('photoshop:CaptionWriter', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:CaptionWriter', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -865,11 +856,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getInstructions()
     {
-        return $this->get('photoshop:Instructions', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:Instructions', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -884,11 +875,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCategory()
     {
-        return $this->get('photoshop:Category', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:Category', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -903,7 +894,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getSupplementalCategories()
     {
@@ -922,7 +913,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getContactAddress()
     {
@@ -941,7 +932,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getContactCity()
     {
@@ -960,7 +951,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getContactState()
     {
@@ -979,7 +970,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getContactZip()
     {
@@ -998,7 +989,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getContactCountry()
     {
@@ -1017,7 +1008,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getContactEmail()
     {
@@ -1058,7 +1049,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getContactPhone()
     {
@@ -1077,7 +1068,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getContactUrl()
     {
@@ -1096,7 +1087,7 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getKeywords()
     {
@@ -1115,11 +1106,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getTransmissionReference()
     {
-        return $this->get('photoshop:TransmissionReference', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:TransmissionReference', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -1134,11 +1125,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getUrgency()
     {
-        return $this->get('photoshop:Urgency', self::PHOTOSHOP_NS);
+        return $this->getAttr('photoshop:Urgency', self::PHOTOSHOP_NS);
     }
 
     /**
@@ -1153,11 +1144,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getRating()
     {
-        return $this->get('xmp:Rating', self::XMP_NS);
+        return $this->getAttr('xmp:Rating', self::XMP_NS);
     }
 
     /**
@@ -1177,11 +1168,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getCreatorTool()
     {
-        return $this->get('xmp:CreatorTool', self::XMP_NS);
+        return $this->getAttr('xmp:CreatorTool', self::XMP_NS);
     }
 
     /**
@@ -1216,11 +1207,11 @@ class Xmp
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getIntellectualGenre()
     {
-        return $this->get('Iptc4xmpCore:IntellectualGenre', self::IPTC4_XMP_CORE_NS);
+        return $this->getAttr('Iptc4xmpCore:IntellectualGenre', self::IPTC4_XMP_CORE_NS);
     }
 
     /**
@@ -1240,7 +1231,7 @@ class Xmp
      */
     public function getDateCreated()
     {
-        $date = $this->get('photoshop:DateCreated', self::PHOTOSHOP_NS);
+        $date = $this->getAttr('photoshop:DateCreated', self::PHOTOSHOP_NS);
 
         if (!$date) {
             return null;
@@ -1283,7 +1274,7 @@ class Xmp
     /**
      * According to the XMP spec, the value of this attribute is required but should generally be empty.
      *
-     * @param $about
+     * @param string $about
      *
      * @return $this
      */
@@ -1365,9 +1356,7 @@ class Xmp
     }
 
     /**
-     * Get IPTC scene
-     *
-     * @return string
+     * @return array
      */
     public function getIPTCScene()
     {
@@ -1375,9 +1364,7 @@ class Xmp
     }
 
     /**
-     * Set IPTC scene
-     *
-     * @param $iptcScene
+     * @param array $iptcScene
      *
      * @return $this
      */
@@ -1388,9 +1375,7 @@ class Xmp
     }
 
     /**
-     * Get featured organisation name
-     *
-     * @return string
+     * @return array
      */
     public function getFeaturedOrganisationName()
     {
@@ -1398,9 +1383,7 @@ class Xmp
     }
 
     /**
-     * Set featured organisation name.
-     *
-     * @param $featuredOrganisationName
+     * @param array $featuredOrganisationName
      *
      * @return $this
      */
@@ -1411,9 +1394,7 @@ class Xmp
     }
 
     /**
-     * Get featured organisation code
-     *
-     * @return string
+     * @return array
      */
     public function getFeaturedOrganisationCode()
     {
@@ -1421,9 +1402,7 @@ class Xmp
     }
 
     /**
-     * Set featured organisation code
-     *
-     * @param $featuredOrganisationCode
+     * @param array $featuredOrganisationCode
      *
      * @return $this
      */
@@ -1434,7 +1413,7 @@ class Xmp
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function hasChanges()
     {

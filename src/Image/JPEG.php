@@ -19,6 +19,11 @@ class JPEG extends AbstractImage
     private $xmp;
 
     /**
+     * @var bool
+     */
+    private $hasNewXmp = false;
+
+    /**
      * @param $filename string
      * @param $segments JPEG\Segment[]
      */
@@ -62,6 +67,8 @@ class JPEG extends AbstractImage
     public function setXmp(Xmp $xmp)
     {
         $this->xmp = $xmp;
+        $this->hasNewXmp = true;
+
         return $this;
 
         /*
