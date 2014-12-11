@@ -18,7 +18,7 @@ use Mockery as M;
 class AbstractImageTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::getAggregateMeta
+     * @covers ::getAggregate
      */
     public function testGetAggregate()
     {
@@ -33,7 +33,7 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getAggregateMeta
+     * @covers ::getAggregate
      */
     public function testGetAggregateWithUnsupportedTypes()
     {

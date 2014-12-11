@@ -32,9 +32,18 @@ class PNG extends AbstractImage
     /**
      * @param string $contents
      * @param string $filename
+     *
+     * @throws \Exception
      */
     public function __construct($contents, $filename = null)
     {
+        $signature = substr($contents, 0, 8);
+
+        // check PNG signature is present
+        if (self::SIGNATURE !== $signature) {
+            throw new \Exception('Invalid PNG file signature');
+        }
+
         $this->chunks = $this->getChunksFromContents($contents);
         $this->filename = $filename;
     }
@@ -139,19 +148,10 @@ class PNG extends AbstractImage
      * @param $filename
      *
      * @return PNG
-     * @throws \Exception
      */
     public static function fromFile($filename)
     {
-        $contents = file_get_contents($filename);
-        $signature = substr($contents, 0, 8);
-
-        // check PNG signature is present
-        if (self::SIGNATURE !== $signature) {
-            throw new \Exception('Invalid PNG file signature');
-        }
-
-        return new self($contents, $filename);
+        return new self(file_get_contents($filename), $filename);
     }
 
     /**
