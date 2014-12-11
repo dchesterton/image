@@ -6,6 +6,7 @@ Supported image types:
    - PNG
    - ~~GIF~~
    - ~~PDF~~
+   - ~~SVG~~
    - ~~WEBP~~
    - ~~TIFF~~
    - ~~DNG~~
