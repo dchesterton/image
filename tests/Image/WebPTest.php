@@ -1,15 +1,15 @@
 <?php
 
-namespace CSD\Photo\Tests\Image;
+namespace CSD\Image\Tests\Image;
 
-use CSD\Photo\Image\WebP;
-use CSD\Photo\Metadata\Exif;
-use CSD\Photo\Metadata\Xmp;
+use CSD\Image\WebP;
+use CSD\Image\Metadata\Exif;
+use CSD\Image\Metadata\Xmp;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  *
- * @coversDefaultClass \CSD\Photo\Image\WebP
+ * @coversDefaultClass \CSD\Image\WebP
  */
 class WebPTest extends \PHPUnit_Framework_TestCase
 {
@@ -62,7 +62,7 @@ class WebPTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \CSD\Photo\Metadata\UnsupportedException
+     * @expectedException \CSD\Image\Metadata\UnsupportedException
      * @expectedExceptionMessage WebP files do not support IPTC metadata
      *
      * @covers ::getIptc

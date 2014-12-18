@@ -1,12 +1,12 @@
 <?php
-namespace CSD\Photo\Image;
+namespace CSD\Image;
 
-use CSD\Photo\Metadata\Xmp;
+use CSD\Image\Metadata\Xmp;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
-class JPEG extends AbstractImage
+class JPEG extends Image
 {
     /**
      * @var JPEG\Segment[]

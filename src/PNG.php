@@ -1,13 +1,13 @@
 <?php
-namespace CSD\Photo\Image;
+namespace CSD\Image;
 
-use CSD\Photo\Metadata\UnsupportedException;
-use CSD\Photo\Metadata\Xmp;
+use CSD\Image\Metadata\UnsupportedException;
+use CSD\Image\Metadata\Xmp;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
-class PNG extends AbstractImage
+class PNG extends Image
 {
     /**
      * First 8 bytes of all PNG files.

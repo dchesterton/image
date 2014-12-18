@@ -1,14 +1,14 @@
 <?php
-namespace CSD\Photo\Image;
+namespace CSD\Image;
 
-use CSD\Photo\Metadata\Exif;
-use CSD\Photo\Metadata\UnsupportedException;
-use CSD\Photo\Metadata\Xmp;
+use CSD\Image\Metadata\Exif;
+use CSD\Image\Metadata\UnsupportedException;
+use CSD\Image\Metadata\Xmp;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  */
-class WebP extends AbstractImage
+class WebP extends Image
 {
     /**
      * @var Xmp

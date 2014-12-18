@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Photo\Metadata;
+namespace CSD\Image\Metadata;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>

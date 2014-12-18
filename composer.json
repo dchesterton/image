@@ -3,7 +3,7 @@
     "type": "project",
     "description": "Common photo handling functionality",
     "autoload": {
-        "psr-4": { "CSD\\Photo\\": "src/" }
+        "psr-4": { "CSD\\Image\\": "src/" }
     },
     "require": {
         "php": ">=5.3.3"

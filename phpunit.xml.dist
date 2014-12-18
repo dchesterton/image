@@ -2,7 +2,7 @@
 
 <phpunit bootstrap="autoload.php.dist" colors="true">
     <testsuites>
-        <testsuite name="CSD Common Library Test Suite">
+        <testsuite name="CSD Image Test Suite">
             <directory suffix="Test.php">./tests/</directory>
         </testsuite>
     </testsuites>

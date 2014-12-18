@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Photo\Metadata;
+namespace CSD\Image\Metadata;
 
 /**
  * Class to read EXIF metadata from an image.

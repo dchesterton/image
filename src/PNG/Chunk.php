@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Photo\Image\PNG;
+namespace CSD\Image\PNG;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>

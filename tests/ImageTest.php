@@ -1,15 +1,15 @@
 <?php
 
-namespace CSD\Photo\Tests;
+namespace CSD\Image\Tests;
 
-use CSD\Photo\Image;
-use CSD\Photo\Image\PNG;
-use CSD\Photo\Image\JPEG;
+use CSD\Image\Image;
+use CSD\Image\PNG;
+use CSD\Image\JPEG;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  *
- * @coversDefaultClass \CSD\Photo\Image
+ * @coversDefaultClass \CSD\Image
  */
 class ImageTest extends \PHPUnit_Framework_TestCase
 {

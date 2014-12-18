@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Photo\Metadata;
+namespace CSD\Image\Metadata;
 
 /**
  * Exception thrown when a file type does not support a certain metadata type.

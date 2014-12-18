@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Photo\Metadata;
+namespace CSD\Image\Metadata;
 
 /**
  * Class to read XMP metadata from an image.

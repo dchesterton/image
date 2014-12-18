@@ -1,14 +1,14 @@
 <?php
 
-namespace CSD\Photo\Tests\Image;
+namespace CSD\Image\Tests\Image;
 
-use CSD\Photo\Image\PNG;
-use CSD\Photo\Metadata\Xmp;
+use CSD\Image\PNG;
+use CSD\Image\Metadata\Xmp;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  *
- * @coversDefaultClass \CSD\Photo\Image\PNG
+ * @coversDefaultClass \CSD\Image\PNG
  */
 class PNGTest extends \PHPUnit_Framework_TestCase
 {
@@ -163,7 +163,7 @@ class PNGTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \CSD\Photo\Metadata\UnsupportedException
+     * @expectedException \CSD\Image\Metadata\UnsupportedException
      * @expectedExceptionMessage PNG files do not support EXIF metadata
      *
      * @covers ::getExif
@@ -175,7 +175,7 @@ class PNGTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \CSD\Photo\Metadata\UnsupportedException
+     * @expectedException \CSD\Image\Metadata\UnsupportedException
      * @expectedExceptionMessage PNG files do not support IPTC metadata
      *
      * @covers ::getIptc

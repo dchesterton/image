@@ -1,19 +1,19 @@
 <?php
 
-namespace CSD\Photo\Tests\Image;
+namespace CSD\Image\Tests\Image;
 
-use CSD\Photo\Image\AbstractImage;
-use CSD\Photo\Metadata\Aggregate;
-use CSD\Photo\Metadata\Exif;
-use CSD\Photo\Metadata\Iptc;
-use CSD\Photo\Metadata\UnsupportedException;
-use CSD\Photo\Metadata\Xmp;
+use CSD\Image\Image;
+use CSD\Image\Metadata\Aggregate;
+use CSD\Image\Metadata\Exif;
+use CSD\Image\Metadata\Iptc;
+use CSD\Image\Metadata\UnsupportedException;
+use CSD\Image\Metadata\Xmp;
 use Mockery as M;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  *
- * @coversDefaultClass \CSD\Photo\Image\AbstractImage
+ * @coversDefaultClass \CSD\Image\AbstractImage
  */
 class AbstractImageTest extends \PHPUnit_Framework_TestCase
 {
@@ -91,10 +91,10 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return AbstractImage|\PHPUnit_Framework_MockObject_MockObject
+     * @return Image|\PHPUnit_Framework_MockObject_MockObject
      */
     private function getMockForAbstractImage()
     {
-        return $this->getMockForAbstractClass(AbstractImage::class);
+        return $this->getMockForAbstractClass(Image::class);
     }
 }

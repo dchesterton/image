@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Photo\Image\WebP;
+namespace CSD\Image\WebP;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
