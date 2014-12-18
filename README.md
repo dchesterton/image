@@ -4,6 +4,10 @@ CSD Photo
 Supported image types:
    - JPEG
    - PNG
+   - ~~GIF~~
+   - ~~PDF~~
+   - ~~SVG~~
+   - ~~WEBP~~
    - ~~TIFF~~
    - ~~DNG~~
    - ~~RAW FORMATS~~
