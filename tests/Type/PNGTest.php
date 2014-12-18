@@ -1,14 +1,14 @@
 <?php
 
-namespace CSD\Image\Tests\Image;
+namespace CSD\Image\Tests\Type;
 
-use CSD\Image\PNG;
+use CSD\Image\Type\PNG;
 use CSD\Image\Metadata\Xmp;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  *
- * @coversDefaultClass \CSD\Image\PNG
+ * @coversDefaultClass \CSD\Image\Type\PNG
  */
 class PNGTest extends \PHPUnit_Framework_TestCase
 {

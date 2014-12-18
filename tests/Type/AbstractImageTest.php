@@ -1,6 +1,6 @@
 <?php
 
-namespace CSD\Image\Tests\Image;
+namespace CSD\Image\Tests\Type;
 
 use CSD\Image\Image;
 use CSD\Image\Metadata\Aggregate;

@@ -1,9 +1,10 @@
 <?php
-namespace CSD\Image;
+namespace CSD\Image\Type;
 
 use CSD\Image\Metadata\Exif;
 use CSD\Image\Metadata\UnsupportedException;
 use CSD\Image\Metadata\Xmp;
+use CSD\Image\Image;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>

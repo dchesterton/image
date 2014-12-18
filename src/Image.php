@@ -78,10 +78,17 @@ abstract class Image implements ImageInterface
     {
         $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-        if ('png' === $ext) {
-            return PNG::fromFile($fileName);
-        } elseif ('jpg' === $ext || 'jpeg' === $ext) {
-            return JPEG::fromFile($fileName);
+        switch ($ext) {
+            case 'jpg':
+            case 'jpeg':
+                return Type\JPEG::fromFile($fileName);
+                break;
+            case 'png':
+                return Type\PNG::fromFile($fileName);
+                break;
+            case 'webp':
+                return Type\WebP::fromFile($fileName);
+                break;
         }
 
         throw new \Exception('Unrecognised file name');
