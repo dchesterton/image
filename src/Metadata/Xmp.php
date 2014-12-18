@@ -1,9 +1,6 @@
 <?php
 namespace CSD\Photo\Metadata;
 
-use DomDocument;
-use DOMXPath;
-
 /**
  * Class to read XMP metadata from an image.
  *
@@ -52,12 +49,12 @@ class Xmp
     const PHOTO_MECHANIC_NS = "http://ns.camerabits.com/photomechanic/1.0/";
 
     /**
-     * @var DomDocument
+     * @var \DomDocument
      */
     private $dom;
 
     /**
-     * @var DOMXPath
+     * @var \DOMXPath
      */
     private $xpath;
 
@@ -95,7 +92,7 @@ class Xmp
      */
     public function __construct($data = null, $formatOutput = false)
     {
-        $this->dom = new DomDocument('1.0', 'UTF-8');
+        $this->dom = new \DomDocument('1.0', 'UTF-8');
         $this->dom->preserveWhiteSpace = false;
         $this->dom->formatOutput = $formatOutput;
         $this->dom->substituteEntities = false;
@@ -113,7 +110,7 @@ class Xmp
         }
 
         // set up xpath
-        $this->xpath = new DOMXPath($this->dom);
+        $this->xpath = new \DOMXPath($this->dom);
 
         foreach ($this->namespaces as $prefix => $url) {
             $this->xpath->registerNamespace($prefix, $url);
