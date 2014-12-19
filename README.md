@@ -1,5 +1,7 @@
-CSD Photo
+Image metadata library
 =========
+
+Warning: This library is pre-alpha and much of it is a WIP or simply not working at all. Proceed at your own risk.
 
 Supported image types:
    - JPEG
