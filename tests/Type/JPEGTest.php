@@ -17,7 +17,7 @@ class JPEGTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetXmpPhotoMechanic()
     {
-        $jpeg = JPEG::fromFile(__DIR__ . '/../Fixtures/metapm.JPG');
+        $jpeg = JPEG::fromFile(__DIR__ . '/../Fixtures/metapm.jpg');
 
         $xmp = $jpeg->getXmp();
 
@@ -30,7 +30,7 @@ class JPEGTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetXmpPhotoshop()
     {
-        $jpeg = JPEG::fromFile(__DIR__ . '/../Fixtures/metaphotoshop.JPG');
+        $jpeg = JPEG::fromFile(__DIR__ . '/../Fixtures/metaphotoshop.jpg');
 
         $xmp = $jpeg->getXmp();
 
@@ -43,7 +43,7 @@ class JPEGTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetXmpNoMeta()
     {
-        $jpeg = JPEG::fromFile(__DIR__ . '/../Fixtures/nometa.JPG');
+        $jpeg = JPEG::fromFile(__DIR__ . '/../Fixtures/nometa.jpg');
 
         $xmp = $jpeg->getXmp();
 
