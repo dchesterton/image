@@ -2,7 +2,7 @@ Image metadata library (PHP 5.5+)
 =========
 [![Build Status](https://travis-ci.org/dchesterton/image.svg?branch=master)](https://travis-ci.org/dchesterton/image) [![Dependency Status](https://www.versioneye.com/user/projects/5494283bdd709d811f0004df/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5494283bdd709d811f0004df)
 
-Warning: This library is pre-alpha and much of it is a WIP or simply not working at all. Proceed at your own risk.
+## Warning: This library is pre-alpha and much of it is a WIP or simply not working at all. Proceed at your own risk.
 
 Supported image types:
    - JPEG
