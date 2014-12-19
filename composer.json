@@ -1,7 +1,7 @@
 {
-    "name": "dchesterton/csd-photo",
+    "name": "dchesterton/image",
     "type": "project",
-    "description": "Common photo handling functionality",
+    "description": "Image metadata library",
     "autoload": {
         "psr-4": { "CSD\\Image\\": "src/" }
     },
