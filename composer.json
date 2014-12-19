@@ -1,7 +1,16 @@
 {
     "name": "dchesterton/image",
-    "type": "project",
+    "license": "MIT",
+    "keywords": ["Image", "Photo", "Metadata", "XMP", "IPTC", "Exif"],
     "description": "Image metadata library",
+    "authors": [
+        {
+            "name": "Daniel Chesterton",
+            "email": "daniel@chestertondevelopment.com",
+            "homepage": "http://www.chestertondevelopment.com",
+            "role": "Developer"
+        }
+    ],
     "autoload": {
         "psr-4": { "CSD\\Image\\": "src/" }
     },
