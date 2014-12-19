@@ -2,6 +2,8 @@ Image metadata library (PHP 5.5+)
 =========
 [![Build Status](https://travis-ci.org/dchesterton/image.svg?branch=master)](https://travis-ci.org/dchesterton/image) [![Dependency Status](https://www.versioneye.com/user/projects/5494283bdd709d811f0004df/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5494283bdd709d811f0004df)
 
+[![Latest Stable Version](https://poser.pugx.org/dchesterton/image/v/stable.svg)](https://packagist.org/packages/dchesterton/image) [![Total Downloads](https://poser.pugx.org/dchesterton/image/downloads.svg)](https://packagist.org/packages/dchesterton/image) [![Latest Unstable Version](https://poser.pugx.org/dchesterton/image/v/unstable.svg)](https://packagist.org/packages/dchesterton/image) [![License](https://poser.pugx.org/dchesterton/image/license.svg)](https://packagist.org/packages/dchesterton/image)
+
 ## Warning: This library is pre-alpha and much of it is a WIP or simply not working at all. Proceed at your own risk.
 
 Supported image types:
