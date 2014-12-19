@@ -6,8 +6,13 @@ php:
   - hhvm
   - hhvm-nightly
 
+env:
+  matrix:
+    - PREFER_LOWEST="--prefer-lowest"
+    - PREFER_LOWEST=""
+
 before_install:
   - composer self-update
 
 install:
-  - composer update --prefer-source
+  - composer update --prefer-source $PREFER_LOWEST
