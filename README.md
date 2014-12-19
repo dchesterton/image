@@ -1,4 +1,4 @@
-Image metadata library
+Image metadata library (PHP 5.5+)
 =========
 
 Warning: This library is pre-alpha and much of it is a WIP or simply not working at all. Proceed at your own risk.
