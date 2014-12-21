@@ -1,14 +1,14 @@
 <?php
 
-namespace CSD\Image\Tests\Type;
+namespace CSD\Image\Tests\Format;
 
-use CSD\Image\Type\PNG;
+use CSD\Image\Format\PNG;
 use CSD\Image\Metadata\Xmp;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  *
- * @coversDefaultClass \CSD\Image\Type\PNG
+ * @coversDefaultClass \CSD\Image\Format\PNG
  */
 class PNGTest extends \PHPUnit_Framework_TestCase
 {
@@ -70,7 +70,7 @@ class PNGTest extends \PHPUnit_Framework_TestCase
 <?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/"/>
 <?xpacket end="w"?>
-', $xmp->getXml());
+', $xmp->getString());
     }
 
     /**

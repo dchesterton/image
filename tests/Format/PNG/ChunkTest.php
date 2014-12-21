@@ -1,13 +1,13 @@
 <?php
 
-namespace CSD\Image\Tests\Type;
+namespace CSD\Image\Tests\Format;
 
-use CSD\Image\Type\PNG\Chunk;
+use CSD\Image\Format\PNG\Chunk;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  *
- * @coversDefaultClass \CSD\Image\Type\PNG\Chunk
+ * @coversDefaultClass \CSD\Image\Format\PNG\Chunk
  */
 class ChunkTest extends \PHPUnit_Framework_TestCase
 {

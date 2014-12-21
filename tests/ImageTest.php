@@ -3,8 +3,8 @@
 namespace CSD\Image\Tests;
 
 use CSD\Image\Image;
-use CSD\Image\Type\PNG;
-use CSD\Image\Type\JPEG;
+use CSD\Image\Format\PNG;
+use CSD\Image\Format\JPEG;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>

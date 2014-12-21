@@ -1,14 +1,14 @@
 <?php
 
-namespace CSD\Image\Tests\Type;
+namespace CSD\Image\Tests\Format;
 
-use CSD\Image\Type\JPEG;
+use CSD\Image\Format\JPEG;
 use CSD\Image\Metadata\Xmp;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  *
- * @coversDefaultClass \CSD\Image\Type\JPEG
+ * @coversDefaultClass \CSD\Image\Format\JPEG
  */
 class JPEGTest extends \PHPUnit_Framework_TestCase
 {

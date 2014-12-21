@@ -81,13 +81,13 @@ abstract class Image implements ImageInterface
         switch ($ext) {
             case 'jpg':
             case 'jpeg':
-                return Type\JPEG::fromFile($fileName);
+                return Format\JPEG::fromFile($fileName);
                 break;
             case 'png':
-                return Type\PNG::fromFile($fileName);
+                return Format\PNG::fromFile($fileName);
                 break;
             case 'webp':
-                return Type\WebP::fromFile($fileName);
+                return Format\WebP::fromFile($fileName);
                 break;
         }
 

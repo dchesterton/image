@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Image\Type;
+namespace CSD\Image\Format;
 
 use CSD\Image\Metadata\UnsupportedException;
 use CSD\Image\Metadata\Xmp;
@@ -55,7 +55,7 @@ class PNG extends Image
     public function getBytes()
     {
         if ($this->xmp && ($this->xmp->hasChanges() || $this->hasNewXmp)) {
-            $data = "XML:com.adobe.xmp\x00\x00\x00\x00\x00" . $this->xmp->getXml();
+            $data = "XML:com.adobe.xmp\x00\x00\x00\x00\x00" . $this->xmp->getString();
 
             $xmpChunk = $this->getXmpChunk();
 

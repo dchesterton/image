@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Image\Type\WebP;
+namespace CSD\Image\Format\PNG;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
@@ -55,15 +55,18 @@ class Chunk
      */
     public function getChunk()
     {
-        $length = $this->getLength();
-        $data = $this->data;
+        return pack('Na4', $this->getLength(), $this->type) . $this->data . $this->getCrc();
+    }
 
-        // pad data with null byte if length is odd
-        if ($length & 1) {
-            $data .= "\x00";
-        }
+    /**
+     * @return string
+     */
+    public function getCrc()
+    {
+        $crc = crc32($this->type . $this->data);
+        $hex = str_pad(dechex($crc), 8, '0', STR_PAD_LEFT); // pad to 4 bytes
 
-        return $this->type . pack('V', $length) . $data;
+        return hex2bin($hex);
     }
 
     /**

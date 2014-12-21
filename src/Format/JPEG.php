@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Image\Type;
+namespace CSD\Image\Format;
 
 use CSD\Image\Metadata\Xmp;
 use CSD\Image\Image;

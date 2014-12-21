@@ -1,5 +1,5 @@
 <?php
-namespace CSD\Image\Type;
+namespace CSD\Image\Format;
 
 use CSD\Image\Metadata\Exif;
 use CSD\Image\Metadata\UnsupportedException;
@@ -204,7 +204,7 @@ class WebP extends Image
     public function getBytes()
     {
         if ($this->xmp && ($this->xmp->hasChanges() || $this->hasNewXmp)) {
-            $data = $this->xmp->getXml();
+            $data = $this->xmp->getString();
 
             $xmpChunk = $this->getXmpChunk();
 

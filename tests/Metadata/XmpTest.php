@@ -166,25 +166,25 @@ class XmpTest extends \PHPUnit_Framework_TestCase
         $xmp = new Xmp;
         $xmp->$setter($value);
 
-        $this->assertContains($expectedAttr, $xmp->getXml());
+        $this->assertContains($expectedAttr, $xmp->getString());
 
         // test with empty meta data
         $xmp = new Xmp('<x:xmpmeta xmlns:x="adobe:ns:meta/" />');
         $xmp->$setter($value);
 
-        $this->assertContains($expectedAttr, $xmp->getXml());
+        $this->assertContains($expectedAttr, $xmp->getString());
 
         // test with existing meta data
         $xmp = $this->getXmpFromFile();
         $xmp->$setter($value);
 
-        $this->assertContains($expectedAttr, $xmp->getXml());
+        $this->assertContains($expectedAttr, $xmp->getString());
 
         // test with existing meta data
         $xmp = $this->getXmpFromFile2();
         $xmp->$setter($value);
 
-        $this->assertContains($expectedElement, $xmp->getXml());
+        $this->assertContains($expectedElement, $xmp->getString());
     }
 
     public function testSetPhotographerName()
@@ -219,7 +219,7 @@ class XmpTest extends \PHPUnit_Framework_TestCase
         $xmp = new Xmp;
         $xmp->setToolkit('Toolkit 1.2.3');
 
-        $this->assertContains('x:xmptk="Toolkit 1.2.3"', $xmp->getXml());
+        $this->assertContains('x:xmptk="Toolkit 1.2.3"', $xmp->getString());
     }
 
     /**
@@ -392,7 +392,7 @@ class XmpTest extends \PHPUnit_Framework_TestCase
         $xmp->setSupplementalCategories(['a category', 'another category']);
         $xmp->setSupplementalCategories([]);
 
-        $this->assertNotContains('photoshop:SupplementalCategories', $xmp->getXml());
+        $this->assertNotContains('photoshop:SupplementalCategories', $xmp->getString());
     }
 
     /**
@@ -406,17 +406,17 @@ class XmpTest extends \PHPUnit_Framework_TestCase
         $xmp->$setter($field);
         $xmp->$setter(null);
 
-        $this->assertNotContains($xmlField, $xmp->getXml());
+        $this->assertNotContains($xmlField, $xmp->getString());
 
         $xmp = $this->getXmpFromFile();
         $xmp->$setter(null);
 
-        $this->assertNotContains($xmlField, $xmp->getXml());
+        $this->assertNotContains($xmlField, $xmp->getString());
 
         $xmp = $this->getXmpFromFile2();
         $xmp->$setter(null);
 
-        $this->assertNotContains($xmlField, $xmp->getXml());
+        $this->assertNotContains($xmlField, $xmp->getString());
     }
 
     /**
@@ -483,8 +483,8 @@ class XmpTest extends \PHPUnit_Framework_TestCase
      */
     private function assertXmpContainsProcessingInstructions(Xmp $xmp)
     {
-        $this->assertContains("<?xpacket begin=\"\xef\xbb\xbf\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>", $xmp->getXml());
-        $this->assertContains('<?xpacket end="w"?>', $xmp->getXml());
+        $this->assertContains("<?xpacket begin=\"\xef\xbb\xbf\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>", $xmp->getString());
+        $this->assertContains('<?xpacket end="w"?>', $xmp->getString());
     }
 
     /**
@@ -510,19 +510,19 @@ class XmpTest extends \PHPUnit_Framework_TestCase
         $xmp = new Xmp;
         $xmp->$setter($value);
 
-        $this->assertContains($expected, $xmp->getXml());
+        $this->assertContains($expected, $xmp->getString());
 
         // test setting value on existing meta data
         $xmp = $this->getXmpFromFile();
         $xmp->$setter($value);
 
-        $this->assertContains($expected, $xmp->getXml());
+        $this->assertContains($expected, $xmp->getString());
 
         // test setting value on existing meta data
         $xmp = $this->getXmpFromFile2();
         $xmp->$setter($value);
 
-        $this->assertContains($expected, $xmp->getXml());
+        $this->assertContains($expected, $xmp->getString());
     }
 
     /**

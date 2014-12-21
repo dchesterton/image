@@ -1,15 +1,15 @@
 <?php
 
-namespace CSD\Image\Tests\Type;
+namespace CSD\Image\Tests\Format;
 
-use CSD\Image\Type\WebP;
+use CSD\Image\Format\WebP;
 use CSD\Image\Metadata\Exif;
 use CSD\Image\Metadata\Xmp;
 
 /**
  * @author Daniel Chesterton <daniel@chestertondevelopment.com>
  *
- * @coversDefaultClass \CSD\Image\Type\WebP
+ * @coversDefaultClass \CSD\Image\Format\WebP
  */
 class WebPTest extends \PHPUnit_Framework_TestCase
 {
