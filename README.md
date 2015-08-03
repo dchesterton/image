@@ -97,10 +97,24 @@ If you don't have a file to work with but you do have the image stored in a stri
 ```php
 $data = ...
 
-$jpeg = new JPEG($data);
+$jpeg = JPEG::fromString($data);
 $jpeg->getXmp()->setHeadline('Test headline');
 
 $jpeg->save('out.jpg'); // or $jpeg->getBytes();
+```
+
+### Instantiate from GD or a stream
+
+You can also create an object from a GD resource or a stream.
+
+```php
+$gd = imagecreate(100, 100);
+$jpeg = JPEG::fromResource($gd);
+```
+
+```php
+$stream = fopen('...', 'r+');
+$jpeg = JPEG::fromStream($stream);
 ```
 
 ### Aggregate metadata
