@@ -31,7 +31,7 @@ class JPEG extends Image
      * @param $segments JPEG\Segment[]
      * @param $filename string
      */
-    public function __construct($imageData, $segments, $filename = null)
+    private function __construct($imageData, $segments, $filename = null)
     {
         $this->imageData = $imageData;
         $this->segments = $segments;
@@ -117,20 +117,22 @@ class JPEG extends Image
     {
         $this->insertXmpSegment();
 
-        // Write SOI
+        // write SOI
         fwrite($handle, "\xFF\xD8");
 
-        // Cycle through new headers, writing them to the new file
+        // write each segment
         foreach ($this->segments as $segment) {
-            fwrite($handle, sprintf("\xFF%c", $segment->getType())); // segment marker
-            fwrite($handle, pack("n", strlen($segment->getData()) + 2)); // segment size
-            fwrite($handle, $segment->getData()); // segment data
+            $segmentContent  = sprintf("\xFF%c", $segment->getType()); // marker
+            $segmentContent .= pack("n", strlen($segment->getData()) + 2); // size
+            $segmentContent .= $segment->getData();
+
+            fwrite($handle, $segmentContent);
         }
 
-        // Write the compressed image data
+        // write the image data
         fwrite($handle, $this->imageData);
 
-        // Write EOI
+        // write EOI
         fwrite($handle, "\xFF\xD9");
     }
 
@@ -213,7 +215,7 @@ class JPEG extends Image
 
                 // If this is a SOS (Start Of Scan) segment, then there is no more header data, the image data follows
                 if ($data[1] == "\xDA") {
-                    // read the rest of the file, reading 1mb at a time till EOF
+                    // read the rest of the file, reading 1mb at a time until EOF
                     $compressedData = '';
                     do {
                         $compressedData .= fread($fileHandle, 1048576);
@@ -255,10 +257,8 @@ class JPEG extends Image
      */
     public static function fromFile($filename)
     {
-        // Attempt to open the jpeg file
         $fileHandle = @fopen($filename, 'rb');
 
-        // Check if the file opened successfully
         if (!$fileHandle) {
             throw new \Exception(sprintf('Could not open file %s', $filename));
         }
