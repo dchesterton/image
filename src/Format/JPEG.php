@@ -1,6 +1,8 @@
 <?php
 namespace CSD\Image\Format;
 
+use CSD\Image\Metadata\Exif;
+use CSD\Image\Metadata\Iptc;
 use CSD\Image\Metadata\Xmp;
 use CSD\Image\Image;
 
@@ -20,26 +22,20 @@ class JPEG extends Image
     private $xmp;
 
     /**
-     * @var bool
+     * @var string
      */
-    private $hasNewXmp = false;
+    private $imageData;
 
     /**
-     * @param $filename string
+     * @param $imageData string
      * @param $segments JPEG\Segment[]
+     * @param $filename string
      */
-    public function __construct($filename = null, $segments = [])
+    public function __construct($imageData, $segments, $filename = null)
     {
-        $this->filename = $filename;
+        $this->imageData = $imageData;
         $this->segments = $segments;
-    }
-
-    /**
-     * @return JPEG\Segment[]
-     */
-    public function getSegments()
-    {
-        return $this->segments;
+        $this->filename = $filename;
     }
 
     /**
@@ -47,7 +43,7 @@ class JPEG extends Image
      *
      * @return JPEG\Segment[]
      */
-    public function getSegmentsByName($name)
+    private function getSegmentsByName($name)
     {
         $segments = [];
 
@@ -68,62 +64,58 @@ class JPEG extends Image
     public function setXmp(Xmp $xmp)
     {
         $this->xmp = $xmp;
-        $this->hasNewXmp = true;
-
         return $this;
-
-        /*
-        $segments = $this->getSegmentsByName('APP1');
-
-        foreach ($segments as $segment) {
-            $data = $segment->getData();
-
-            // And if it has the Adobe XMP/RDF label (http://ns.adobe.com/xap/1.0/\x00) ,
-            if (strncmp($data, "http://ns.adobe.com/xap/1.0/\x00", 29) == 0) {
-                $segment->setData("http://ns.adobe.com/xap/1.0/\x00" . $xmpData);
-                return true;
-            }
-        }
-
-        // No pre-existing XMP/RDF found - insert a new one after any pre-existing APP0 or APP1 blocks
-        $i = 0;
-
-        // Loop until a block is found that isn't an APP0 or APP1
-        while (($this->segments[$i]->getName() == "APP0") || ($this->segments[$i]->getName() == "APP1")) {
-            $i++;
-        }
-
-        // Insert a new XMP/RDF APP1 segment at the specified point.
-        $segment = new JPEG\Segment(0xE1, 0, "http://ns.adobe.com/xap/1.0/\x00" . $xmpData);
-
-        array_splice($this->segments, $i, 0, [$segment]);*/
     }
 
+    /**
+     * @return string
+     */
+    public function getBytes()
+    {
+        $stream = fopen('php://temp', 'r+');
+        $this->write($stream);
+
+        rewind($stream);
+
+        $contents = stream_get_contents($stream);
+
+        fclose($stream);
+
+        return $contents;
+    }
+
+    /**
+     * Save to file.
+     *
+     * @param string $filename
+     * @throws \Exception
+     * @return void
+     */
     public function save($filename = null)
     {
         $filename = $filename?: $this->filename;
-
-        // extract the compressed image data from the old file
-        $imageData = get_jpeg_image_data($this->filename);
-
-        if (!$imageData) {
-            throw new \Exception('Could not get image data from ' . $this->filename);
-        }
-
-        // check the headers are not too large
-        foreach ($this->segments as $segment) {
-            if (strlen($segment->getData()) > 0xfffd) {
-                throw new \Exception('Header ' . $segment->getType() . ' is too large to fit in JPEG segment');
-            }
-        }
 
         // Attempt to open the new jpeg file
         $handle = @fopen($filename, 'wb');
 
         // Check if the file opened successfully
         if (!$handle) {
-            throw new \Exception('Could not open file ' . $filename);
+            throw new \Exception(sprintf('Could not open file %s', $filename));
         }
+
+        $this->write($handle);
+
+        fclose($handle);
+    }
+
+    /**
+     * Write JPG data to a stream/file.
+     *
+     * @param $handle
+     */
+    private function write($handle)
+    {
+        $this->insertXmpSegment();
 
         // Write SOI
         fwrite($handle, "\xFF\xD8");
@@ -136,32 +128,55 @@ class JPEG extends Image
         }
 
         // Write the compressed image data
-        fwrite($handle, $imageData);
+        fwrite($handle, $this->imageData);
 
         // Write EOI
         fwrite($handle, "\xFF\xD9");
-
-        // Close File
-        fclose($handle);
     }
 
+    /**
+     * Load a JPEG from a GD image resource.
+     *
+     * @param $gd
+     * @return self
+     */
+    public static function fromResource($gd)
+    {
+        ob_start();
+        imagejpeg($gd);
+
+        $contents = ob_get_contents();
+        ob_end_clean();
+
+        return self::fromString($contents);
+    }
 
     /**
-     * @param $filename
+     * Load a JPEG from a string.
      *
-     * @return JPEG
+     * @param $string
+     * @return self
+     */
+    public static function fromString($string)
+    {
+        $stream = fopen('php://temp', 'r+');
+        fwrite($stream, $string);
+        rewind($stream);
+
+        return self::fromStream($stream);
+    }
+
+    /**
+     * Load a JPEG from a stream.
+     *
+     * @param resource $fileHandle
+     * @param string   $filename
+     *
+     * @return self
      * @throws \Exception
      */
-    public static function fromFile($filename)
+    public static function fromStream($fileHandle, $filename = null)
     {
-        // Attempt to open the jpeg file
-        $fileHandle = @fopen($filename, 'rb');
-
-        // Check if the file opened successfully
-        if (!$fileHandle) {
-            throw new \Exception(sprintf('Could not open file %s', $filename));
-        }
-
         try {
             // Read the first two characters
             $data = fread($fileHandle, 2);
@@ -179,12 +194,10 @@ class JPEG extends Image
                 throw new \Exception('No start of segment header character, JPEG probably corrupted.');
             }
 
-            // Cycle through the file until, one of: 1) an EOI (End of image) marker is hit,
-            //                                       2) we have hit the compressed image data
-            //                                       3) or end of file is hit
-
             $segments = [];
+            $imageData = null;
 
+            // Cycle through the file until, either an EOI (End of image) marker is hit or end of file is hit
             while (($data[1] != "\xD9") && (!feof($fileHandle))) {
                 // Found a segment to look at.
                 // Check that the segment marker is not a restart marker, restart markers don't have size or data
@@ -200,6 +213,16 @@ class JPEG extends Image
 
                 // If this is a SOS (Start Of Scan) segment, then there is no more header data, the image data follows
                 if ($data[1] == "\xDA") {
+                    // read the rest of the file, reading 1mb at a time till EOF
+                    $compressedData = '';
+                    do {
+                        $compressedData .= fread($fileHandle, 1048576);
+                    } while (!feof($fileHandle));
+
+                    // Strip off EOI and anything after
+                    $eoiPos = strpos($compressedData, "\xFF\xD9");
+                    $imageData = substr($compressedData, 0, $eoiPos);
+
                     break; // exit loop as no more headers available.
                 } else {
                     // Not an SOS - Read the next two bytes - should be the segment marker for the next segment
@@ -214,23 +237,70 @@ class JPEG extends Image
             }
 
             fclose($fileHandle);
-            return new self($filename, $segments);
+            return new self($imageData, $segments, $filename);
 
         } catch (\Exception $e) {
-            // close the file, then rethrow the exception
             fclose($fileHandle);
             throw $e;
-        } finally {
-            //fclose($fileHandle);
         }
     }
 
     /**
-     * @return string
+     * Load a JPEG from a file.
+     *
+     * @param $filename
+     *
+     * @return self
+     * @throws \Exception
      */
-    public function getBytes()
+    public static function fromFile($filename)
     {
-        // TODO: Implement getData() method.
+        // Attempt to open the jpeg file
+        $fileHandle = @fopen($filename, 'rb');
+
+        // Check if the file opened successfully
+        if (!$fileHandle) {
+            throw new \Exception(sprintf('Could not open file %s', $filename));
+        }
+
+        return self::fromStream($fileHandle, $filename);
+    }
+
+    /**
+     * @return void
+     */
+    private function insertXmpSegment()
+    {
+        $xmp = $this->getXmp();
+
+        if (!$xmp) {
+            return;
+        }
+
+        $segments = $this->getSegmentsByName('APP1');
+
+        foreach ($segments as $segment) {
+            $data = $segment->getData();
+
+            // And if it has the Adobe XMP/RDF label (http://ns.adobe.com/xap/1.0/\x00) ,
+            if (strncmp($data, "http://ns.adobe.com/xap/1.0/\x00", 29) == 0) {
+                $segment->setData("http://ns.adobe.com/xap/1.0/\x00" . $xmp->getString());
+                return;
+            }
+        }
+
+        // No pre-existing XMP/RDF found - insert a new one after any pre-existing APP0 or APP1 blocks
+        $i = 0;
+
+        // Loop until a block is found that isn't an APP0 or APP1
+        while (($this->segments[$i]->getName() == "APP0") || ($this->segments[$i]->getName() == "APP1")) {
+            $i++;
+        }
+
+        // Insert a new XMP/RDF APP1 segment at the specified point.
+        $segment = new JPEG\Segment(0xE1, 0, "http://ns.adobe.com/xap/1.0/\x00" . $xmp->getString());
+
+        array_splice($this->segments, $i, 0, [$segment]);
     }
 
     /**
@@ -272,117 +342,3 @@ class JPEG extends Image
         // TODO: Implement getIptc() method.
     }
 }
-
-
-function get_jpeg_image_data( $filename )
-{
-    // Attempt to open the jpeg file
-    $filehnd = @fopen($filename, 'rb');
-
-    // Check if the file opened successfully
-    if ( ! $filehnd  )
-    {
-        // Could't open the file - exit
-        return FALSE;
-    }
-
-
-    // Read the first two characters
-    $data = fread( $filehnd, 2 );
-
-    // Check that the first two characters are 0xFF 0xDA  (SOI - Start of image)
-    if ( $data != "\xFF\xD8" )
-    {
-        // No SOI (FF D8) at start of file - close file and return;
-        fclose($filehnd);
-        return FALSE;
-    }
-
-
-
-    // Read the third character
-    $data = fread( $filehnd, 2 );
-
-    // Check that the third character is 0xFF (Start of first segment header)
-    if ( $data{0} != "\xFF" )
-    {
-        // NO FF found - close file and return
-        fclose($filehnd);
-        return;
-    }
-
-    // Flag that we havent yet hit the compressed image data
-    $hit_compressed_image_data = FALSE;
-
-
-    // Cycle through the file until, one of: 1) an EOI (End of image) marker is hit,
-    //                                       2) we have hit the compressed image data (no more headers are allowed after data)
-    //                                       3) or end of file is hit
-
-    while ( ( $data{1} != "\xD9" ) && (! $hit_compressed_image_data) && ( ! feof( $filehnd ) ))
-    {
-        // Found a segment to look at.
-        // Check that the segment marker is not a Restart marker - restart markers don't have size or data after them
-        if (  ( ord($data{1}) < 0xD0 ) || ( ord($data{1}) > 0xD7 ) )
-        {
-            // Segment isn't a Restart marker
-            // Read the next two bytes (size)
-            $sizestr = fread( $filehnd, 2 );
-
-            // convert the size bytes to an integer
-            $decodedsize = unpack ("nsize", $sizestr);
-
-            // Read the segment data with length indicated by the previously read size
-            $segdata = fread( $filehnd, $decodedsize['size'] - 2 );
-        }
-
-        // If this is a SOS (Start Of Scan) segment, then there is no more header data - the compressed image data follows
-        if ( $data{1} == "\xDA" )
-        {
-            // Flag that we have hit the compressed image data - exit loop after reading the data
-            $hit_compressed_image_data = TRUE;
-
-            // read the rest of the file in
-            // Can't use the filesize function to work out
-            // how much to read, as it won't work for files being read by http or ftp
-            // So instead read 1Mb at a time till EOF
-
-            $compressed_data = "";
-            do
-            {
-                $compressed_data .= fread( $filehnd, 1048576 );
-            } while( ! feof( $filehnd ) );
-
-            // Strip off EOI and anything after
-            $EOI_pos = strpos( $compressed_data, "\xFF\xD9" );
-            $compressed_data = substr( $compressed_data, 0, $EOI_pos );
-        }
-        else
-        {
-            // Not an SOS - Read the next two bytes - should be the segment marker for the next segment
-            $data = fread( $filehnd, 2 );
-
-            // Check that the first byte of the two is 0xFF as it should be for a marker
-            if ( $data{0} != "\xFF" )
-            {
-                // Problem - NO FF foundclose file and return";
-                fclose($filehnd);
-                return;
-            }
-        }
-    }
-
-    // Close File
-    fclose($filehnd);
-
-    // Return the compressed data if it was found
-    if ( $hit_compressed_image_data )
-    {
-        return $compressed_data;
-    }
-    else
-    {
-        return FALSE;
-    }
-}
-
