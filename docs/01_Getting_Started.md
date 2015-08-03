@@ -50,6 +50,27 @@ first argument to any of the file type classes.
 use CSD\Image\Format\JPEG;
 
 $data = get_my_image(); // fetched from database etc.
-$image = new JPEG($data);
+$image = JPEG::fromString($data);
 ...
+```
+
+### From a GD resource
+
+You can add metadata to a GD resource using the library.
+
+```
+// example of creating an image with GD
+$gd = imagecreate(100, 100);
+
+$jpeg = JPEG::fromResource($gd);
+```
+
+### From a stream
+
+If you already have a stream, e.g. an open file, you can pass the file too.
+
+```
+$file = fopen('...', 'r+');
+
+$jpeg = JPEG::fromStream($file);
 ```
