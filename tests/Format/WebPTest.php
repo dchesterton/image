@@ -77,8 +77,19 @@ class WebPTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Exception
      * @expectedExceptionMessage Only extended WebP format is supported
      */
-    public function testSimpleUnsupported()
+    public function ttestSimpleUnsupported()
     {
         WebP::fromFile(__DIR__ . '/../Fixtures/simple.webp');
+    }
+
+    public function testConvertsFromSimpleFormat()
+    {
+        // todo: mock Xmp class
+        $xmp = new Xmp;
+
+        $webp = WebP::fromFile(__DIR__ . '/../Fixtures/simple.webp');
+        $webp->setXmp($xmp);
+
+        var_dump($webp->getBytes());
     }
 }

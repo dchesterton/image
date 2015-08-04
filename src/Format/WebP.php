@@ -51,7 +51,7 @@ class WebP extends Image
         $this->chunks = $this->getChunksFromContents($contents);
 
         if (!$this->isExtendedFormat()) {
-            throw new \Exception('Only extended WebP format is supported');
+//            throw new \Exception('Only extended WebP format is supported');
         }
 
         $this->filename = $filename;
@@ -120,6 +120,17 @@ class WebP extends Image
         return $this->getChunkByType('EXIF');
     }
 
+    private function getBitstreamChunk()
+    {
+        foreach ($this->chunks as $chunk) {
+            if ($chunk->getType() == 'VP8 ' || $chunk->getType() == 'VP8L') {
+                return $chunk;
+            }
+        }
+
+        throw new \Exception('Invalid format: No VP8 or VP8L chunk');
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -154,6 +165,7 @@ class WebP extends Image
      */
     public static function fromFile($filename)
     {
+        // var_dump($filename);
         return new self(file_get_contents($filename), $filename);
     }
 
@@ -189,8 +201,13 @@ class WebP extends Image
                 $pos += 1;
             }
 
-            $chunk = new WebP\Chunk($chunkType, $payload);
-            $chunks[] = $chunk;
+            // var_dump($chunkType);
+
+            if ('VP8X' === $chunkType) {
+                $chunks[] = new WebP\VP8XChunk($payload);
+            } else {
+                $chunks[] = new WebP\Chunk($chunkType, $payload);
+            }
 
             $chunkType = substr($contents, $pos, 4);
         }
@@ -203,8 +220,10 @@ class WebP extends Image
      */
     public function getBytes()
     {
-        if ($this->xmp && ($this->xmp->hasChanges() || $this->hasNewXmp)) {
-            $data = $this->xmp->getString();
+        $xmp = $this->getXmp();
+
+        if ($xmp && ($xmp->hasChanges() || $this->hasNewXmp)) {
+            $data = $xmp->getString();
 
             $xmpChunk = $this->getXmpChunk();
 
@@ -213,26 +232,50 @@ class WebP extends Image
                 $xmpChunk->setData($data);
             } else {
                 // add new chunk to contain XMP data
-                $xmpChunk = new WebP\Chunk('XMP ', $data);
+                $this->chunks[] = new WebP\Chunk('XMP ', $data);
+            }
 
-                // insert at end of chunks
-                $this->chunks[] = $xmpChunk;
+            // todo: set XMP byte in VP8X header
+        }
+
+        $hasExtendedFeatures = false;
+
+        foreach ($this->chunks as $chunk) {
+            if (in_array($chunk->getType(), ['ICCP', 'ANIM', 'ALPH', 'EXIF', 'XMP'])) {
+                $hasExtendedFeatures = true;
+                break;
             }
         }
 
-        // todo: set XMP byte in VP8X header
+        if ($hasExtendedFeatures) {
+            if (!$this->isExtendedFormat()) {
+                // generate VP8X header
 
-        $chunks = '';
+            }
 
-        /** @var $chunk WebP\Chunk */
-        foreach ($this->chunks as $chunk) {
-            $chunks .= $chunk->getChunk();
+            return $this->getFile($this->chunks);
+
+        } else {
+            $chunk = $this->getBitstreamChunk();
+            return $this->getFile([$chunk]);
+        }
+    }
+
+    /**
+     * @param WebP\Chunk[] $chunks
+     *
+     * @return string
+     */
+    private function getFile($chunks)
+    {
+        $data = '';
+
+        foreach ($chunks as $chunk) {
+            $data .= $chunk->getChunk();
         }
 
-        $length = strlen($chunks) + 4;
-        $header = 'RIFF' . pack('V', $length) . 'WEBP';
-
-        return $header . $chunks;
+        $header = 'RIFF' . pack('V', strlen($chunks) + 4) . 'WEBP';
+        return $header . $data;
     }
 
     /**

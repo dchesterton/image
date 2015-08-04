@@ -11,6 +11,8 @@ use CSD\Image\Image;
  */
 class JPEG extends Image
 {
+    const SOI = "\xFF\xD8";
+
     /**
      * @var JPEG\Segment[]
      */
@@ -93,7 +95,7 @@ class JPEG extends Image
      */
     public function save($filename = null)
     {
-        $filename = $filename?: $this->filename;
+        $filename = $filename ?: $this->filename;
 
         // Attempt to open the new jpeg file
         $handle = @fopen($filename, 'wb');
@@ -169,6 +171,19 @@ class JPEG extends Image
     }
 
     /**
+     * Load a JPEG from an Imagick instance.
+     *
+     * @param \Imagick $imagick
+     *
+     * @return JPEG
+     */
+    public static function fromImagick(\Imagick $imagick)
+    {
+        $imagick->setImageFormat('jpg');
+        return self::fromString($imagick->getImageBlob());
+    }
+
+    /**
      * Load a JPEG from a stream.
      *
      * @param resource $fileHandle
@@ -184,7 +199,7 @@ class JPEG extends Image
             $data = fread($fileHandle, 2);
 
             // Check that the first two characters are 0xFF 0xDA (SOI - Start of image)
-            if ($data != "\xFF\xD8") {
+            if ($data !== self::SOI) {
                 throw new \Exception('Could not find SOI, invalid JPEG file.');
             }
 
@@ -232,19 +247,18 @@ class JPEG extends Image
 
                     // Check that the first byte of the two is 0xFF as it should be for a marker
                     if ($data[0] != "\xFF") {
-                        // NO FF found - close file and return - JPEG is probably corrupted
                         throw new \Exception('No FF found, JPEG probably corrupted.');
                     }
                 }
             }
 
-            fclose($fileHandle);
             return new self($imageData, $segments, $filename);
 
-        } catch (\Exception $e) {
+        } finally {
             fclose($fileHandle);
-            throw $e;
         }
+
+        return false;
     }
 
     /**
@@ -277,14 +291,14 @@ class JPEG extends Image
             return;
         }
 
-        $segments = $this->getSegmentsByName('APP1');
+        $renderSegment = function (Xmp $xmp) {
+            return "http://ns.adobe.com/xap/1.0/\x00" . $xmp->getString();
+        };
 
-        foreach ($segments as $segment) {
-            $data = $segment->getData();
-
+        foreach ($this->getSegmentsByName('APP1') as $segment) {
             // And if it has the Adobe XMP/RDF label (http://ns.adobe.com/xap/1.0/\x00) ,
-            if (strncmp($data, "http://ns.adobe.com/xap/1.0/\x00", 29) == 0) {
-                $segment->setData("http://ns.adobe.com/xap/1.0/\x00" . $xmp->getString());
+            if (strncmp($segment->getData(), "http://ns.adobe.com/xap/1.0/\x00", 29) == 0) {
+                $segment->setData($renderSegment($xmp));
                 return;
             }
         }
@@ -293,12 +307,12 @@ class JPEG extends Image
         $i = 0;
 
         // Loop until a block is found that isn't an APP0 or APP1
-        while (($this->segments[$i]->getName() == "APP0") || ($this->segments[$i]->getName() == "APP1")) {
+        while (($this->segments[$i]->getName() == 'APP0') || ($this->segments[$i]->getName() == 'APP1')) {
             $i++;
         }
 
         // Insert a new XMP/RDF APP1 segment at the specified point.
-        $segment = new JPEG\Segment(0xE1, 0, "http://ns.adobe.com/xap/1.0/\x00" . $xmp->getString());
+        $segment = new JPEG\Segment(0xE1, 0, $renderSegment($xmp));
 
         array_splice($this->segments, $i, 0, [$segment]);
     }

@@ -2,6 +2,9 @@
 
 namespace CSD\Image;
 
+use CSD\Image\Format\JPEG;
+use CSD\Image\Format\PNG;
+use CSD\Image\Format\WebP;
 use CSD\Image\Metadata\Aggregate;
 use CSD\Image\Metadata\UnsupportedException;
 
@@ -92,5 +95,38 @@ abstract class Image implements ImageInterface
         }
 
         throw new \Exception('Unrecognised file name');
+    }
+
+    /**
+     * @param $string
+     *
+     * @return JPEG|WebP|PNG|false
+     */
+    public static function fromString($string)
+    {
+        $len = strlen($string);
+
+        // try JPEG
+        if ($len >= 2) {
+            if (JPEG::SOI === substr($string, 0, 2)) {
+                return JPEG::fromString($string);
+            }
+        }
+
+        // try WebP
+        if ($len >= 4) {
+            if ('RIFF' === substr($string, 0, 4) && 'WEBP' === substr($string, 8, 4)) {
+                return WebP::fromString($string);
+            }
+        }
+
+        // try PNG
+        if ($len >= 8) {
+            if (PNG::SIGNATURE === substr($string, 0, 8)) {
+                return PNG::fromString($string);
+            }
+        }
+
+        return false;
     }
 }

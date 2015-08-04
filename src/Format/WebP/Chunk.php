@@ -9,12 +9,12 @@ class Chunk
     /**
      * @var string
      */
-    private $type;
+    protected $type;
 
     /**
      * @var string
      */
-    private $data;
+    protected $data;
 
     /**
      * @param string $type

@@ -75,7 +75,7 @@ class Exif
 
             $pos += 4;
 
-            var_dump($tagNumber, $dataLength, $dataLocation);
+            //var_dump($tagNumber, $dataLength, $dataLocation);
         }
     }
 
