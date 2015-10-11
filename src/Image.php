@@ -92,6 +92,9 @@ abstract class Image implements ImageInterface
             case 'webp':
                 return Format\WebP::fromFile($fileName);
                 break;
+            case 'psd':
+                return Format\PSD::fromFile($fileName);
+                break;
         }
 
         throw new \Exception('Unrecognised file name');
