@@ -498,7 +498,7 @@ class Xmp
         }
 
 
-        if (!$value || (!is_array($value) && count($value) == 0)) {
+        if (!$value || (!is_array($value) && strlen($value) == 0)) {
             // remove element
             $parent->parentNode->parentNode->removeChild($parent->parentNode);
         } else {
