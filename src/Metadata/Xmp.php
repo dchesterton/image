@@ -497,8 +497,7 @@ class Xmp
             $node->appendChild($parent);
         }
 
-        if (!$value || (is_array($value) && 
-                        $value) === 0)) {
+        if (!$value || (is_array($value) && count($value) === 0)) {
             // remove element
             $parent->parentNode->parentNode->removeChild($parent->parentNode);
         } else {
