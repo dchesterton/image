@@ -497,8 +497,8 @@ class Xmp
             $node->appendChild($parent);
         }
 
-
-        if (!$value || (!is_array($value) && count($value) == 0)) {
+        if (!$value || (is_array($value) && 
+                        $value) === 0)) {
             // remove element
             $parent->parentNode->parentNode->removeChild($parent->parentNode);
         } else {
@@ -1234,7 +1234,7 @@ class Xmp
      *
      * @return $this
      */
-    public function setDateCreated(\DateTime $dateCreated, $format = 'c')
+    public function setDateCreated(\DateTime $dateCreated, $format = 'Y-m-d')
     {
         return $this->setAttr('photoshop:DateCreated', $dateCreated->format($format), self::PHOTOSHOP_NS);
     }
