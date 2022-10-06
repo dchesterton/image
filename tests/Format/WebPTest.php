@@ -11,7 +11,7 @@ use CSD\Image\Metadata\Xmp;
  *
  * @coversDefaultClass \CSD\Image\Format\WebP
  */
-class WebPTest extends \PHPUnit_Framework_TestCase
+class WebPTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test that a non-WebP file throws an exception.

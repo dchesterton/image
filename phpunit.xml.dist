@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="autoload.php.dist" colors="true">
+<phpunit bootstrap="autoload.php.dist" colors="true" cacheResult="false">
     <testsuites>
         <testsuite name="CSD Image Test Suite">
             <directory suffix="Test.php">./tests/</directory>

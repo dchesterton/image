@@ -8,7 +8,7 @@ use CSD\Image\Metadata\Xmp;
 /**
  * @coversDefaultClass \CSD\Image\Metadata\Xmp
  */
-class XmpTest extends \PHPUnit_Framework_TestCase
+class XmpTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return array

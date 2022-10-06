@@ -10,7 +10,7 @@ use CSD\Image\Metadata\Xmp;
  *
  * @coversDefaultClass \CSD\Image\Format\PNG
  */
-class PNGTest extends \PHPUnit_Framework_TestCase
+class PNGTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test that a non-PNG file throws an exception.

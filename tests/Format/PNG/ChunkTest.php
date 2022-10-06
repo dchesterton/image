@@ -9,7 +9,7 @@ use CSD\Image\Format\PNG\Chunk;
  *
  * @coversDefaultClass \CSD\Image\Format\PNG\Chunk
  */
-class ChunkTest extends \PHPUnit_Framework_TestCase
+class ChunkTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @covers ::__construct

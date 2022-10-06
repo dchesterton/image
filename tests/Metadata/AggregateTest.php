@@ -13,7 +13,7 @@ use Mockery as M;
  *
  * @coversDefaultClass \CSD\Image\Metadata\Aggregate
  */
-class AggregateTest extends \PHPUnit_Framework_TestCase
+class AggregateTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return array

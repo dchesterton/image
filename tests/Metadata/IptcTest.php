@@ -6,7 +6,7 @@ use CSD\Image\Metadata\Iptc;
 /**
  * @coversDefaultClass \CSD\Image\Metadata\Iptc
  */
-class IptcTest extends \PHPUnit_Framework_TestCase
+class IptcTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Iptc
@@ -16,7 +16,7 @@ class IptcTest extends \PHPUnit_Framework_TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->meta = Iptc::fromFile(__DIR__ . '/../Fixtures/metapm.jpg');
     }
