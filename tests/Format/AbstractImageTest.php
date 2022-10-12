@@ -15,7 +15,7 @@ use Mockery as M;
  *
  * @coversDefaultClass \CSD\Image\AbstractImage
  */
-class AbstractImageTest extends \PHPUnit_Framework_TestCase
+class AbstractImageTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @covers ::getAggregate
@@ -91,7 +91,7 @@ class AbstractImageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Image|\PHPUnit_Framework_MockObject_MockObject
+     * @return Image|\PHPUnit\Framework\MockObject\MockObject
      */
     private function getMockForAbstractImage()
     {

@@ -11,7 +11,7 @@ use CSD\Image\Format\JPEG;
  *
  * @coversDefaultClass \CSD\Image
  */
-class ImageTest extends \PHPUnit_Framework_TestCase
+class ImageTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @covers ::fromFile

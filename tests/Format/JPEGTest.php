@@ -10,7 +10,7 @@ use CSD\Image\Metadata\Xmp;
  *
  * @coversDefaultClass \CSD\Image\Format\JPEG
  */
-class JPEGTest extends \PHPUnit_Framework_TestCase
+class JPEGTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test that JPEG can read XMP embedded with Photo Mechanic.

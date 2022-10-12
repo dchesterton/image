@@ -7,7 +7,7 @@ use CSD\Image\Metadata\Xmp;
 /**
  * @coversDefaultClass \CSD\Image\Metadata\PSD
  */
-class PsdTest extends \PHPUnit_Framework_TestCase
+class PsdTest extends \PHPUnit\Framework\TestCase
 {
         /**
      * Test that PSD can read XMP embedded with Photoshop.
